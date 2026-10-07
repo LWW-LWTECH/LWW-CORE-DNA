@@ -6,6 +6,9 @@
     throw new Error('lwt-icon requires lwt-core.js to be loaded first.');
   }
 
+  let CSS = '.lwti{ display: inline-block; font-family: inherit; width:24px; height:24px; }';
+  let TEMPLATE = '';
+
   class LWTIcon extends window.LWT.Element {
     constructor() {
       super();
@@ -17,6 +20,8 @@
     }
 
     async render() {
+      this._renderShadow(TEMPLATE, CSS);
+
       this.icon = this._root.host.getAttribute('icon');
       this.icon ? this.icon = this.icon.split('_') : '';
       this.iconurl = this.iconhost + '/' + this.icon.join('/') + '.svg';
