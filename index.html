@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web-CDNA</title>
+
+    <link rel="shortcut icon" href="/icons/cdna/favicon.ico">
+
+    <script src="/lwt-core.js" type="text/javascript"></script>
+    <script src="/lwt-general.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="/lwt-core.css">
+
+    <style>
+        body{
+            font-family:arial;
+            background-color: #f0f0f0;
+            font-size: 13px;
+        }
+        section{
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+
+            details{
+                background-color: white;
+                padding: 1.1em;
+                border-radius: 5px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+                margin-bottom: 12px;
+
+                summary{
+                    cursor: pointer;
+                    font-weight: bold;
+                    padding-bottom: 1.1em;
+                }
+
+                p{
+                    font-size: 0.9em;
+                }
+            }
+
+            pre {
+                background-color: #f9f9f9;
+                padding: 10px;
+                border-radius: 5px;
+                border: 1px solid #ddd;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <section>
+        <details open class="accordion-section">
+            <summary>Web-Core DNA</summary>
+
+            <h4>Implementation</h4>
+            <p>The Web-Core DNA library provides developers with the core functionalities and utilities required to build modern web applications efficiently.</p>
+            <pre><code>&lt;head&gt;
+    &lt;script src="/lwt-core.js" type="text/javascript"&gt;&lt;/script&gt;
+    &lt;script src="/lwt-general.js" type="text/javascript"&gt;&lt;/script&gt;
+    &lt;link rel="stylesheet" href="/lwt-core.css"&gt;
+&lt;/head&gt;
+</code></pre>
+        </details>
+
+        <details open class="accordion-section">
+            <summary>General Elements</summary>
+            <p>These elements are part of the CDNA general library. A growing collection of custom Web UI components for building modern web applications.</p>
+            <br/>
+
+            <details open>
+                    <summary>Accordion</summary>
+                    <div>Collapsable content allows for select content to be hidden until needed. Each new accordion item triggered will collapse the other items.</div>
+                    
+                    <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-accordion&gt;
+        &lt;lwtg-accordion-item&gt;
+            &lt;div slot="label"&gt;Accordion Item 1&lt;/div&gt;
+            &lt;div slot="body"&gt;Content for Accordion Item 1&lt;/div&gt;
+        &lt;/lwtg-accordion-item&gt;
+        &lt;lwtg-accordion-item&gt;
+            &lt;div slot="label"&gt;Accordion Item 2&lt;/div&gt;
+            &lt;div slot="body"&gt;Content for Accordion Item 2&lt;/div&gt;
+        &lt;/lwtg-accordion-item&gt;
+    &lt;/lwtg-accordion&gt;</code></pre>
+
+                <lwtg-accordion>
+                    <lwtg-accordion-item>
+                        <div slot="label">Accordion Item 1</div>
+                        <div slot="body">Content for Accordion Item 1</div>
+                    </lwtg-accordion-item>
+                    <lwtg-accordion-item>
+                        <div slot="label">Accordion Item 2</div>
+                        <div slot="body">Content for Accordion Item 2</div>
+                    </lwtg-accordion-item>
+                </lwtg-accordion>
+
+            </details>
+
+            <details>
+                <summary>Alerts</summary>
+                <p>Alerts are used to provide feedback messages to the user. They can be of different variants such as success, warning, info, and error. This also has an option for title and dismissable.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-alert variant="success" title="Success" dismissible="true"&gt; This is a success alert. &lt;/lwtg-alert&gt;
+    &lt;lwtg-alert variant="warning" title="Warning"&gt; This is a warning alert. &lt;/lwtg-alert&gt;
+    &lt;lwtg-alert variant="info"&gt; This is an info alert. &lt;/lwtg-alert&gt;
+    &lt;lwtg-alert variant="error" dismissible="true"&gt; This is a danger alert. &lt;/lwtg-alert&gt;</code></pre>
+                
+                <lwtg-alert variant="success" title="Success" dismissible="true"> This is a success alert. </lwtg-alert>
+                <lwtg-alert variant="warning" title="Warning"> This is a warning alert. </lwtg-alert>
+                <lwtg-alert variant="info"> This is an info alert. </lwtg-alert>
+                <lwtg-alert variant="error" dismissible="true"> This is a danger alert. </lwtg-alert>
+            </details>
+
+            <details>
+                <summary>Buttons</summary>
+                <p>Buttons are used to trigger actions. They can have different variants such as primary, secondary, and danger.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-button variant="primary"&gt;Primary Button&lt;/lwtg-button&gt;
+&lt;lwtg-button variant="secondary"&gt;Secondary Button&lt;/lwtg-button&gt;
+&lt;lwtg-button variant="danger"&gt;Danger Button&lt;/lwtg-button&gt;</code></pre>
+                <lwtg-button variant="primary">Primary Button</lwtg-button>
+                <lwtg-button variant="secondary">Secondary Button</lwtg-button>
+                <lwtg-button variant="danger">Danger Button</lwtg-button>
+            </details>
+
+            <details>
+                <summary>Cards</summary>
+                <p>Cards are used to display content in a structured format, often including an image, label, body content, and a call-to-action button.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-card image="image-url" image-alt="Image Alt Text" label="Card Label"&gt;
+    &lt;p&gt;Card body content goes here.&lt;/p&gt;
+&lt;/lwtg-card&gt;</code></pre>
+                <div style="display: flex; gap:10px;">
+                    <lwtg-card style="flex:1;" image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-tztpxRE_5-ZUpHms3lwxP3rhrZ6ExdxtLAGtCDFDzJThMkdxoNl5vsY&s=10" image-alt="Sound Set" label="Sound Set">
+                        <p>This is a Sound Set product, perfect for your audio needs.</p>
+                    </lwtg-card>
+                    <lwtg-card style="flex:1;" image="https://magicstudio.com/blog/content/images/2023/10/props-product-photography.webp" image-alt="Spar Day" label="Spar Day">
+                        <p>This is a Spar Day product, perfect for your daily needs.</p>
+                    </lwtg-card>
+                    <lwtg-card style="flex:1;" image="https://cdn.shopify.com/s/files/1/0657/8569/2375/files/Cosmetic-Skincare-Product-photo-Table-top-setup.jpg?v=1681840139" image-alt="Cosmetic" label="Cosmetic">
+                        <p>Cosmetic skincare product designed to enhance beauty.</p>
+                    </lwtg-card>
+                    <lwtg-card style="flex:1;" image="https://i.pinimg.com/736x/aa/53/93/aa5393796e2aebe074f75fbc072cd76c.jpg" image-alt="Cleansing" label="Cleansing">
+                        <p>soHERBs Charantia Cleansing Gel, for acne-prone skin.</p>
+                    </lwtg-card>
+                </div>
+            </details>
+
+            <details>
+                <summary>Image Grid</summary>
+                <p>The image grid component allows you to display a series of images in a grid layout. You can control the number of columns, rows, gap between items, and the height of each row. Then each grid item can be told to span columns or rows.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-image-grid columns="4" rows="2" gap="12px" row-height="180px"&gt;
+        &lt;lwtg-grid-item  col-span="1"   row-span="2"    src="img_url_here.jpg" label="Alpha"&gt;&lt;/lwtg-grid-item&gt;
+        &lt;lwtg-grid-item  col-span="2"   row-span="1"    src="img_url_here.jpg" label="Beta"&gt;&lt;/lwtg-grid-item&gt;
+        &lt;lwtg-grid-item  col-span="1"   row-span="2"    src="img_url_here.jpg" label="Beta"&gt;&lt;/lwtg-grid-item&gt;
+        &lt;lwtg-grid-item  col-span="1"   row-span="1"    src="img_url_here.jpg" label="Delta"&gt;&lt;/lwtg-grid-item&gt;
+        &lt;lwtg-grid-item  col-span="1"   row-span="1"    src="img_url_here.jpg" label="Delta"&gt;&lt;/lwtg-grid-item&gt;
+    &lt;/lwtg-image-grid&gt;
+                </code></pre>
+
+                <lwtg-image-grid columns="4" rows="2" gap="12px" row-height="180px">
+                    <lwtg-grid-item  col-span="1"   row-span="2"    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-tztpxRE_5-ZUpHms3lwxP3rhrZ6ExdxtLAGtCDFDzJThMkdxoNl5vsY&s=10" label="Alpha"></lwtg-grid-item>
+                    <lwtg-grid-item  col-span="2"   row-span="1"    src="https://magicstudio.com/blog/content/images/2023/10/props-product-photography.webp" label="Beta"></lwtg-grid-item>
+                    <lwtg-grid-item  col-span="1"   row-span="2"    src="https://cdn.shopify.com/s/files/1/0657/8569/2375/files/Cosmetic-Skincare-Product-photo-Table-top-setup.jpg?v=1681840139" label="Beta"></lwtg-grid-item>
+                    <lwtg-grid-item  col-span="1"   row-span="1"    src="https://i.pinimg.com/736x/aa/53/93/aa5393796e2aebe074f75fbc072cd76c.jpg" label="Delta"></lwtg-grid-item>
+                    <lwtg-grid-item  col-span="1"   row-span="1"    src="https://i.pinimg.com/736x/aa/53/93/aa5393796e2aebe074f75fbc072cd76c.jpg" label="Delta"></lwtg-grid-item>
+                </lwtg-image-grid>
+            </details>
+
+            <details>
+                <summary>Modal</summary>
+                <p>The modal component allows you to display content in a popup overlay. You can place any content inside the modal, such as text, images, or forms.</p>
+                <pre><code>&lt;lwtg-button onclick="document.getElementById('demo-modal').show()"&gt;Open Modal&lt;/lwtg-button&gt;
+
+    &lt;lwtg-modal id="demo-modal" label="Example Modal"&gt;
+        &lt;p&gt;This is a modal component. You can place any content here, such as text, images, or forms.&lt;/p&gt;
+        &lt;div style="text-align:right; margin-top:1rem;"&gt;
+            &lt;lwtg-button variant="secondary" data-lwt-dismiss&gt;Cancel&lt;/lwtg-button&gt;
+        &lt;/div&gt;
+    &lt;/lwtg-modal&gt;</code></pre>
+
+                <lwtg-button onclick="document.getElementById('demo-modal').show()">Open Modal</lwtg-button>
+                <lwtg-modal id="demo-modal" label="Example Modal">
+                    <p>This is a modal component. You can place any content here, such as text, images, or forms.</p>
+                    <div style="text-align:right; margin-top:1rem;">
+                    <lwtg-button variant="secondary" data-lwt-dismiss>Cancel</lwtg-button>
+                    </div>
+                </lwtg-modal>
+            </details>
+
+
+        </details>
+    </section>
+
+    <script>
+        let details = document.querySelectorAll('.accordion-section details');
+        details.forEach(detail => {
+            detail.addEventListener('toggle', () => {
+                if (detail.open) {
+                    details.forEach(d => {
+                        if (d !== detail) d.open = false;
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
