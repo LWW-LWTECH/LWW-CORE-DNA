@@ -9,6 +9,8 @@
 
     <script src="/lwt-core.js" type="text/javascript"></script>
     <script src="/lwt-general.js" type="text/javascript"></script>
+    <script src="/lwt-forms.js" type="text/javascript"></script>
+    <script src="/lwt-dashboard.js" type="text/javascript"></script>
     <link rel="stylesheet" href="/lwt-core.css">
 
     <style>
@@ -33,6 +35,9 @@
                     cursor: pointer;
                     font-weight: bold;
                     padding-bottom: 1.1em;
+                    display: grid;
+                    grid-template-columns: 20px auto;
+                    gap: 10px;
                 }
 
                 p{
@@ -47,14 +52,41 @@
                 border: 1px solid #ddd;
                 overflow-x: auto;
             }
+
+            h4 {
+                margin-top: 1.4em;
+                margin-bottom: 0.4em;
+                font-size: 1em;
+                border-top: 1px solid #eee;
+                padding-top: 0.8em;
+            }
+
+            ul {
+                margin: 0.3em 0 1em 0;
+                padding-left: 1.4em;
+                font-size: 0.9em;
+            }
+
+            ul li {
+                margin-bottom: 0.4em;
+                line-height: 1.4;
+            }
+
+            code {
+                background: #f1f1f1;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-size: 0.95em;
+            }
         }
     </style>
 </head>
 <body>
-    
+
     <section>
         <details open class="accordion-section">
-            <summary>Web-Core DNA</summary>
+            <summary><span></span>Web-Core DNA</summary>
+
 
             <h4>Implementation</h4>
             <p>The Web-Core DNA library provides developers with the core functionalities and utilities required to build modern web applications efficiently.</p>
@@ -67,14 +99,14 @@
         </details>
 
         <details open class="accordion-section">
-            <summary>General Elements</summary>
+            <summary><span></span>General Elements</summary>
             <p>These elements are part of the CDNA general library. A growing collection of custom Web UI components for building modern web applications.</p>
             <br/>
 
             <details open>
-                    <summary>Accordion</summary>
+                    <summary><lwtg-icon icon="app_accordion" width="15px" height="15px"></lwtg-icon> Accordion</summary>
                     <div>Collapsable content allows for select content to be hidden until needed. Each new accordion item triggered will collapse the other items.</div>
-                    
+
                     <h4>Implementation</h4>
                 <pre><code>&lt;lwtg-accordion&gt;
         &lt;lwtg-accordion-item&gt;
@@ -98,25 +130,28 @@
                     </lwtg-accordion-item>
                 </lwtg-accordion>
 
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>multiple</code> &mdash; (on &lt;lwtg-accordion&gt;) boolean &mdash; allow more than one item open at once. Default is single-open (opening one closes the others).</li><li><code>open</code> &mdash; (on &lt;lwtg-accordion-item&gt;) read once at connect for the initial state. Toggling it later via setAttribute does not re-open/close the item &mdash; use the methods below.</li><li><code>disabled</code> &mdash; (on &lt;lwtg-accordion-item&gt;) boolean, read once at connect; prevents toggling.</li></ul><p><strong>Slots:</strong></p><ul><li><code>label</code> &mdash; (on &lt;lwtg-accordion-item&gt;) the clickable header content.</li><li><code>body</code> &mdash; (on &lt;lwtg-accordion-item&gt;) the collapsible body content.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>isOpen</code> &mdash; (on &lt;lwtg-accordion-item&gt;) read-only boolean.</li></ul><p><strong>Methods:</strong></p><ul><li><code>open()</code> &mdash; opens this item.</li><li><code>close()</code> &mdash; closes this item.</li><li><code>toggle()</code> &mdash; toggles this item.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-open / lwt-close</code> &mdash; fired on the item when it opens/closes (no detail).</li></ul><p><strong>Theming:</strong> --lwt-accordion-chevron-color, --lwt-accordion-focus-color, --lwt-accordion-border, --lwt-accordion-bg.</p>
             </details>
 
             <details>
-                <summary>Alerts</summary>
+                <summary><lwtg-icon icon="app_alert" width="15px" height="15px"></lwtg-icon> Alerts</summary>
                 <p>Alerts are used to provide feedback messages to the user. They can be of different variants such as success, warning, info, and error. This also has an option for title and dismissable.</p>
                 <h4>Implementation</h4>
                 <pre><code>&lt;lwtg-alert variant="success" title="Success" dismissible="true"&gt; This is a success alert. &lt;/lwtg-alert&gt;
     &lt;lwtg-alert variant="warning" title="Warning"&gt; This is a warning alert. &lt;/lwtg-alert&gt;
     &lt;lwtg-alert variant="info"&gt; This is an info alert. &lt;/lwtg-alert&gt;
     &lt;lwtg-alert variant="error" dismissible="true"&gt; This is a danger alert. &lt;/lwtg-alert&gt;</code></pre>
-                
+
                 <lwtg-alert variant="success" title="Success" dismissible="true"> This is a success alert. </lwtg-alert>
                 <lwtg-alert variant="warning" title="Warning"> This is a warning alert. </lwtg-alert>
                 <lwtg-alert variant="info"> This is an info alert. </lwtg-alert>
                 <lwtg-alert variant="error" dismissible="true"> This is a danger alert. </lwtg-alert>
+
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>variant</code> &mdash; "info" (default) | "success" | "warning" | "error".</li><li><code>title</code> &mdash; optional bold heading above the message.</li><li><code>dismissible</code> &mdash; boolean &mdash; shows a close button.</li></ul><p><strong>Methods:</strong></p><ul><li><code>close()</code> &mdash; removes the alert from the DOM (emits lwt-close first). Dismissal is permanent.</li></ul><p><strong>Theming:</strong> --lwt-alert-bg, --lwt-alert-success-color, --lwt-alert-warning-color, --lwt-alert-info-color, --lwt-alert-error-color, --lwt-alert-title-color, --lwt-alert-text-color.</p>
             </details>
 
             <details>
-                <summary>Buttons</summary>
+                <summary><lwtg-icon icon="app_button" width="15px" height="15px"></lwtg-icon> Buttons</summary>
                 <p>Buttons are used to trigger actions. They can have different variants such as primary, secondary, and danger.</p>
                 <h4>Implementation</h4>
                 <pre><code>&lt;lwtg-button variant="primary"&gt;Primary Button&lt;/lwtg-button&gt;
@@ -125,10 +160,12 @@
                 <lwtg-button variant="primary">Primary Button</lwtg-button>
                 <lwtg-button variant="secondary">Secondary Button</lwtg-button>
                 <lwtg-button variant="danger">Danger Button</lwtg-button>
+
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>variant</code> &mdash; "primary" | "secondary" | "danger".</li><li><code>size</code> &mdash; "sm" | "lg".</li><li><code>disabled</code> &mdash; boolean.</li><li><code>label</code> &mdash; fallback text (overridden by slot="label" or default-slot content).</li></ul><p><strong>Slots:</strong></p><ul><li><code>cta / label</code> &mdash; named slots for richer content than the plain text attributes allow.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-click</code> &mdash; fires on click when not disabled; detail: { originalEvent }.</li></ul><p><strong>Theming:</strong> --lwt-primary, --lwt-secondary, --lwt-danger, --lwt-btn-radius, --lwt-focus-color.</p>
             </details>
 
             <details>
-                <summary>Cards</summary>
+                <summary><lwtg-icon icon="app_card" width="15px" height="15px"></lwtg-icon> Cards</summary>
                 <p>Cards are used to display content in a structured format, often including an image, label, body content, and a call-to-action button.</p>
                 <h4>Implementation</h4>
                 <pre><code>&lt;lwtg-card image="image-url" image-alt="Image Alt Text" label="Card Label"&gt;
@@ -148,10 +185,12 @@
                         <p>soHERBs Charantia Cleansing Gel, for acne-prone skin.</p>
                     </lwtg-card>
                 </div>
+
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>image</code> &mdash; image URL; the image block is omitted entirely if unset.</li><li><code>image-alt</code> &mdash; alt text for the image.</li><li><code>image-position</code> &mdash; "top" (default) | "bottom".</li><li><code>label</code> &mdash; fallback heading text (overridden by slot="label").</li></ul><p><strong>Slots:</strong></p><ul><li><code>label</code> &mdash; heading; falls back to the label attribute.</li><li><code>(default)</code> &mdash; body content &mdash; any HTML, not just text.</li><li><code>cta</code> &mdash; call-to-action content, typically an &lt;lwtg-button&gt;.</li></ul><p><strong>Theming:</strong> --lwt-card-bg, --lwt-card-border, --lwt-card-radius, --lwt-card-shadow, --lwt-card-padding, --lwt-card-image-height, --lwt-card-label-color, --lwt-card-body-color, --lwt-card-gap.</p>
             </details>
 
             <details>
-                <summary>Image Grid</summary>
+                <summary><lwtg-icon icon="app_grid" width="15px" height="15px"></lwtg-icon> Image Grid</summary>
                 <p>The image grid component allows you to display a series of images in a grid layout. You can control the number of columns, rows, gap between items, and the height of each row. Then each grid item can be told to span columns or rows.</p>
                 <h4>Implementation</h4>
                 <pre><code>&lt;lwtg-image-grid columns="4" rows="2" gap="12px" row-height="180px"&gt;
@@ -170,10 +209,12 @@
                     <lwtg-grid-item  col-span="1"   row-span="1"    src="https://i.pinimg.com/736x/aa/53/93/aa5393796e2aebe074f75fbc072cd76c.jpg" label="Delta"></lwtg-grid-item>
                     <lwtg-grid-item  col-span="1"   row-span="1"    src="https://i.pinimg.com/736x/aa/53/93/aa5393796e2aebe074f75fbc072cd76c.jpg" label="Delta"></lwtg-grid-item>
                 </lwtg-image-grid>
+
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>columns</code> &mdash; (on &lt;lwtg-image-grid&gt;) target/max column count; omit for responsive auto-fill mode.</li><li><code>rows</code> &mdash; (on &lt;lwtg-image-grid&gt;) fixed row count; combined with columns it becomes a hard cap.</li><li><code>gap</code> &mdash; (on &lt;lwtg-image-grid&gt;) CSS length between cells (default 1rem).</li><li><code>row-height</code> &mdash; (on &lt;lwtg-image-grid&gt;) CSS length for every implicit row (default 160px).</li><li><code>dense</code> &mdash; (on &lt;lwtg-image-grid&gt;) boolean; grid-auto-flow: dense, backfills gaps left by spanning items.</li><li><code>src</code> &mdash; (on &lt;lwtg-grid-item&gt;) image URL, base64/data URI, or a YouTube URL.</li><li><code>href</code> &mdash; (on &lt;lwtg-grid-item&gt;) optional link URL; wraps the rendered image in an &lt;a&gt;.</li><li><code>type</code> &mdash; (on &lt;lwtg-grid-item&gt;) "image" (default) | "svg" | "embed"; YouTube is auto-detected from src.</li><li><code>label</code> &mdash; (on &lt;lwtg-grid-item&gt;) caption overlay shown on hover/focus.</li><li><code>col-span / row-span</code> &mdash; (on &lt;lwtg-grid-item&gt;) how many columns/rows this cell spans.</li><li><code>play-inline</code> &mdash; (on &lt;lwtg-grid-item&gt;) boolean, YouTube only; swaps the thumbnail for a live autoplaying iframe on click.</li></ul><p><strong>Slots:</strong></p><ul><li><code>(default)</code> &mdash; (on &lt;lwtg-grid-item&gt;) raw content for "svg" (no src) and "embed" types.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-click</code> &mdash; (on &lt;lwtg-grid-item&gt;) fired on click/Enter/Space; detail: { type, src, label, index }.</li><li><code>lwt-play</code> &mdash; (on &lt;lwtg-grid-item&gt;) YouTube + play-inline only; detail: { videoId }.</li></ul><p><strong>Theming:</strong> --lwt-image-grid-gap, --lwt-image-grid-row-height, --lwt-image-grid-min-width, --lwt-grid-item-radius, --lwt-grid-item-bg, --lwt-grid-item-label-bg, --lwt-grid-item-label-color.</p>
             </details>
 
             <details>
-                <summary>Modal</summary>
+                <summary><lwtg-icon icon="app_modal" width="15px" height="15px"></lwtg-icon> Modal</summary>
                 <p>The modal component allows you to display content in a popup overlay. You can place any content inside the modal, such as text, images, or forms.</p>
                 <pre><code>&lt;lwtg-button onclick="document.getElementById('demo-modal').show()"&gt;Open Modal&lt;/lwtg-button&gt;
 
@@ -191,8 +232,633 @@
                     <lwtg-button variant="secondary" data-lwt-dismiss>Cancel</lwtg-button>
                     </div>
                 </lwtg-modal>
+
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>label</code> &mdash; the dialog&apos;s accessible label/heading.</li><li><code>open</code> &mdash; present at parse time auto-opens on connect; not reactive afterward &mdash; use .show()/.close().</li><li><code>no-dismiss</code> &mdash; boolean; disables closing via backdrop click or Escape, for modals requiring an explicit action.</li></ul><p><strong>Slots:</strong></p><ul><li><code>(default)</code> &mdash; any content &mdash; headers, paragraphs, action buttons.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>isOpen</code> &mdash; read-only boolean.</li></ul><p><strong>Methods:</strong></p><ul><li><code>show()</code> &mdash; opens the modal.</li><li><code>close()</code> &mdash; closes the modal.</li><li><code>toggle()</code> &mdash; toggles open/closed.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-open / lwt-close</code> &mdash; detail: { reason: 'api'|'backdrop'|'escape'|'dismiss-button' }.</li></ul><p><strong>Theming:</strong> --lwt-modal-bg, --lwt-modal-color, --lwt-modal-backdrop. Exposes part="dialog". Any slotted element with data-lwt-dismiss closes the modal automatically when clicked.</p>
             </details>
 
+            <details>
+                <summary><lwtg-icon icon="app_icon" width="15px" height="15px"></lwtg-icon> Icon</summary>
+                <p>Renders a single SVG icon fetched from the library&apos;s icon set (first from this repo&apos;s GitHub raw host, then falling back to a local <code>/icons</code> path). Used throughout this page for the little icons in each section&apos;s summary.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-icon icon="app_button" width="32px" height="32px"&gt;&lt;/lwtg-icon&gt;</code></pre>
+                
+                <lwtg-icon icon="app_button" width="32px" height="32px"></lwtg-icon>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>icon</code> &mdash; required; an icon id in the form "category_name" (e.g. "app_button"). The underscore is split into a folder path and fetched as "/category/name.svg".</li><li><code>width</code> &mdash; CSS length for the rendered icon (default 24px).</li><li><code>height</code> &mdash; CSS length for the rendered icon (default 24px).</li></ul>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_carousel" width="15px" height="15px"></lwtg-icon> Carousel</summary>
+                <p>A horizontally-scrolling strip of &lt;lwtg-card&gt; slides with dot pagination underneath, built on native CSS scroll-snap (not JS paging), so touch/trackpad/mouse-wheel scrolling all just work.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-carousel&gt;
+    &lt;lwtg-card image="https://i.pravatar.cc/300?img=11" label="Rachael Kennith"&gt;
+        I have been in the Design field for over 25 years and have a great passion for all things design related.
+    &lt;/lwtg-card&gt;
+    &lt;lwtg-card image="https://i.pravatar.cc/300?img=12" label="Dillan Mattie"&gt;
+        Working across brand, product, and UX, I love turning complex problems into simple, elegant solutions.
+    &lt;/lwtg-card&gt;
+    &lt;lwtg-card image="https://i.pravatar.cc/300?img=13" label="Ryland Libby"&gt;
+        Front-end engineer focused on accessible, performant interfaces that hold up at scale.
+    &lt;/lwtg-card&gt;
+&lt;/lwtg-carousel&gt;</code></pre>
+                
+                <lwtg-carousel>
+    <lwtg-card image="https://i.pravatar.cc/300?img=11" label="Rachael Kennith">
+        I have been in the Design field for over 25 years and have a great passion for all things design related.
+    </lwtg-card>
+    <lwtg-card image="https://i.pravatar.cc/300?img=12" label="Dillan Mattie">
+        Working across brand, product, and UX, I love turning complex problems into simple, elegant solutions.
+    </lwtg-card>
+    <lwtg-card image="https://i.pravatar.cc/300?img=13" label="Ryland Libby">
+        Front-end engineer focused on accessible, performant interfaces that hold up at scale.
+    </lwtg-card>
+</lwtg-carousel>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>dot-as-image</code> &mdash; boolean; renders each dot as a small square thumbnail of that card&apos;s own image instead of a plain circular dot.</li><li><code>image-position</code> &mdash; optional; if set, synced onto every &lt;lwtg-card&gt; child ("top"/"bottom").</li></ul><p><strong>Slots:</strong></p><ul><li><code>(default)</code> &mdash; one or more &lt;lwtg-card&gt; slides &mdash; see the Cards entry above for what a single card supports.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>activeIndex</code> &mdash; read-only, current slide index.</li></ul><p><strong>Methods:</strong></p><ul><li><code>goTo(index)</code> &mdash; scrolls to a specific slide.</li><li><code>next()</code> &mdash; advances one slide.</li><li><code>prev()</code> &mdash; goes back one slide.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-change</code> &mdash; detail: { index, card } &mdash; fired whenever the active slide changes, from a dot click, .goTo(), or the user scrolling the track.</li></ul><p><strong>Theming:</strong> --lwt-carousel-gap, --lwt-carousel-card-width, --lwt-carousel-dot-color, --lwt-carousel-dot-active-color, --lwt-carousel-dot-size.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_layout-grid" width="15px" height="15px"></lwtg-icon> Grid</summary>
+                <p>A general-purpose CSS Grid layout container for arbitrary page content &mdash; set a target column count and minimum column width, and it wraps automatically with no media queries. Any child can opt into spanning via <code>data-col-span</code>/<code>data-row-span</code> (2&ndash;8 or "full", and 2&ndash;6 respectively). This is the mixed-content counterpart to Image Grid below, which is tuned for uniform media cells instead.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-grid columns="4" gap="12px" min-col-width="140px"&gt;
+    &lt;div style="background:#eef2ff;padding:12px;border-radius:6px;"&gt;Item 1&lt;/div&gt;
+    &lt;div style="background:#eef2ff;padding:12px;border-radius:6px;"&gt;Item 2&lt;/div&gt;
+    &lt;div style="background:#eef2ff;padding:12px;border-radius:6px;" data-col-span="2"&gt;Wider item, spans two columns&lt;/div&gt;
+    &lt;div style="background:#eef2ff;padding:12px;border-radius:6px;"&gt;Item 4&lt;/div&gt;
+    &lt;div style="background:#eef2ff;padding:12px;border-radius:6px;"&gt;Item 5&lt;/div&gt;
+&lt;/lwtg-grid&gt;</code></pre>
+                
+                <lwtg-grid columns="4" gap="12px" min-col-width="140px">
+    <div style="background:#eef2ff;padding:12px;border-radius:6px;">Item 1</div>
+    <div style="background:#eef2ff;padding:12px;border-radius:6px;">Item 2</div>
+    <div style="background:#eef2ff;padding:12px;border-radius:6px;" data-col-span="2">Wider item, spans two columns</div>
+    <div style="background:#eef2ff;padding:12px;border-radius:6px;">Item 4</div>
+    <div style="background:#eef2ff;padding:12px;border-radius:6px;">Item 5</div>
+</lwtg-grid>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>columns</code> &mdash; target/maximum column count. Omit for pure responsive mode (auto-fit at min-col-width).</li><li><code>rows</code> &mdash; fixed row count with equal (1fr) heights. Omit to let rows size to their content.</li><li><code>gap</code> &mdash; CSS length between cells (default 1rem).</li><li><code>min-col-width</code> &mdash; minimum column width before wrapping (default 200px) &mdash; governs when the layout collapses to fewer columns.</li><li><code>row-height</code> &mdash; fixed height for every implicit row (default "auto").</li><li><code>dense</code> &mdash; boolean; grid-auto-flow: dense &mdash; lets smaller items backfill gaps left by spanning items.</li></ul><p><strong>Slots:</strong></p><ul><li><code>(default)</code> &mdash; any children you want laid out.</li></ul><p><strong>Theming:</strong> --lwt-grid-gap, --lwt-grid-row-height, --lwt-grid-min-col-width, --lwt-grid-columns, --lwt-grid-rows.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_grid-item" width="15px" height="15px"></lwtg-icon> Grid Item &amp;mdash; media types</summary>
+                <p>&lt;lwtg-grid-item&gt; (used above inside Image Grid) also resolves inline SVG and YouTube media automatically. This example shows a plain image, an inline/stylable SVG via the default slot, and an auto-detected YouTube video that swaps to a live, autoplaying iframe on click.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-image-grid columns="3" gap="12px" row-height="160px"&gt;
+    &lt;lwtg-grid-item src="https://i.pravatar.cc/400?img=20" label="Photo"&gt;&lt;/lwtg-grid-item&gt;
+    &lt;lwtg-grid-item type="svg" label="Inline SVG"&gt;
+        &lt;svg viewBox="0 0 24 24" width="48" height="48" fill="#3b82f6"&gt;&lt;circle cx="12" cy="12" r="10"/&gt;&lt;/svg&gt;
+    &lt;/lwtg-grid-item&gt;
+    &lt;lwtg-grid-item src="https://youtu.be/dQw4w9WgXcQ" label="YouTube video" play-inline&gt;&lt;/lwtg-grid-item&gt;
+&lt;/lwtg-image-grid&gt;</code></pre>
+                
+                <lwtg-image-grid columns="3" gap="12px" row-height="160px">
+    <lwtg-grid-item src="https://i.pravatar.cc/400?img=20" label="Photo"></lwtg-grid-item>
+    <lwtg-grid-item type="svg" label="Inline SVG">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="#3b82f6"><circle cx="12" cy="12" r="10"/></svg>
+    </lwtg-grid-item>
+    <lwtg-grid-item src="https://youtu.be/dQw4w9WgXcQ" label="YouTube video" play-inline></lwtg-grid-item>
+</lwtg-image-grid>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>src</code> &mdash; image URL, base64/data URI, or a YouTube URL.</li><li><code>href</code> &mdash; optional link URL; wraps the rendered image in an &lt;a target="_blank"&gt;.</li><li><code>video-id</code> &mdash; explicit YouTube video id; skips URL parsing, takes priority over src.</li><li><code>type</code> &mdash; "image" (default) | "svg" | "embed" &mdash; forces resolution; YouTube detection from src/video-id always wins regardless.</li><li><code>alt</code> &mdash; alt text for the rendered &lt;img&gt;.</li><li><code>label</code> &mdash; caption shown as an overlay on hover/focus; omitted entirely from the DOM when unset.</li><li><code>col-span</code> &mdash; how many grid columns this cell spans (default 1; 2&ndash;8 or "full").</li><li><code>row-span</code> &mdash; how many grid rows this cell spans (default 1; 2&ndash;6).</li><li><code>play-inline</code> &mdash; boolean, YouTube only; clicking swaps the thumbnail facade for a live autoplaying iframe in place.</li></ul><p><strong>Slots:</strong></p><ul><li><code>(default)</code> &mdash; raw content for "svg" (no src) and "embed" types &mdash; the only way to get a stylable, currentColor-aware SVG.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-click</code> &mdash; detail: { type, src, label, index }.</li><li><code>lwt-play</code> &mdash; YouTube + play-inline only; detail: { videoId }.</li></ul><p><strong>Theming:</strong> --lwt-grid-item-radius, --lwt-grid-item-bg, --lwt-grid-item-label-bg, --lwt-grid-item-label-color, --lwt-grid-item-focus-color.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_nav-menu" width="15px" height="15px"></lwtg-icon> Nav Menu</summary>
+                <p>A page main-menu container (&lt;lwtg-nav-menu&gt;) that coordinates &lt;lwtg-nav-item&gt; entries: horizontal/vertical layout, hover or tap-to-open dropdowns at any nesting depth, and a responsive collapse into a hamburger + off-canvas panel below a breakpoint.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-nav-menu orientation="horizontal" breakpoint="880" aria-label="Main"&gt;
+    &lt;lwtg-nav-item href="#" active&gt;Home&lt;/lwtg-nav-item&gt;
+    &lt;lwtg-nav-item label="Products"&gt;
+        &lt;lwtg-nav-item href="#"&gt;Product A&lt;/lwtg-nav-item&gt;
+        &lt;lwtg-nav-item href="#"&gt;Product B&lt;/lwtg-nav-item&gt;
+    &lt;/lwtg-nav-item&gt;
+    &lt;lwtg-nav-item href="#"&gt;About&lt;/lwtg-nav-item&gt;
+    &lt;lwtg-nav-item href="#" disabled&gt;Disabled&lt;/lwtg-nav-item&gt;
+&lt;/lwtg-nav-menu&gt;</code></pre>
+                
+                <lwtg-nav-menu orientation="horizontal" breakpoint="880" aria-label="Main">
+    <lwtg-nav-item href="#" active>Home</lwtg-nav-item>
+    <lwtg-nav-item label="Products">
+        <lwtg-nav-item href="#">Product A</lwtg-nav-item>
+        <lwtg-nav-item href="#">Product B</lwtg-nav-item>
+    </lwtg-nav-item>
+    <lwtg-nav-item href="#">About</lwtg-nav-item>
+    <lwtg-nav-item href="#" disabled>Disabled</lwtg-nav-item>
+</lwtg-nav-menu>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>orientation</code> &mdash; (on &lt;lwtg-nav-menu&gt;) "horizontal" (default) | "vertical". Synced onto every child &lt;lwtg-nav-item&gt;.</li><li><code>sticky</code> &mdash; (on &lt;lwtg-nav-menu&gt;) boolean; sticks the bar to the top of its nearest scrolling ancestor.</li><li><code>breakpoint</code> &mdash; (on &lt;lwtg-nav-menu&gt;) px width below which the menu switches to a hamburger/off-canvas mobile mode (default 880).</li><li><code>href</code> &mdash; (on &lt;lwtg-nav-item&gt;) if set (and the item has no children), renders an &lt;a&gt;; otherwise a &lt;button&gt;.</li><li><code>target</code> &mdash; (on &lt;lwtg-nav-item&gt;) anchor target, e.g. "_blank".</li><li><code>label</code> &mdash; (on &lt;lwtg-nav-item&gt;) fallback text (overridden by slot="label").</li><li><code>disabled</code> &mdash; (on &lt;lwtg-nav-item&gt;) boolean; blocks all interaction.</li><li><code>active</code> &mdash; (on &lt;lwtg-nav-item&gt;) boolean; visual "current page" indicator &mdash; set by hand, no routing detection is done for you.</li></ul><p><strong>Slots:</strong></p><ul><li><code>label</code> &mdash; (on &lt;lwtg-nav-item&gt;) named slot for rich label content.</li><li><code>(default)</code> &mdash; (on &lt;lwtg-nav-item&gt;) nested &lt;lwtg-nav-item&gt; children, which makes this item a dropdown parent automatically.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>isOpen, labelText</code> &mdash; (on &lt;lwtg-nav-item&gt;) read-only.</li></ul><p><strong>Methods:</strong></p><ul><li><code>closeAll()</code> &mdash; (on &lt;lwtg-nav-menu&gt;) closes every open dropdown branch.</li><li><code>open() / close() / toggle() / focusTrigger()</code> &mdash; (on &lt;lwtg-nav-item&gt;) control a dropdown parent.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-navopen / lwt-navclose</code> &mdash; (on &lt;lwtg-nav-item&gt;) fired on a dropdown parent; bubble up and are used by &lt;lwtg-nav-menu&gt; to coordinate single-open-per-level.</li><li><code>lwtf-select</code> &mdash; (on &lt;lwtg-nav-item&gt;) leaf items only; detail: { href, label }.</li></ul><p><strong>Theming:</strong> --lwt-nav-item-color, --lwt-nav-item-hover-bg, --lwt-nav-item-active-bg, --lwt-nav-menu-gap, --lwt-nav-menu-z, --lwt-nav-dropdown-bg/-border/-shadow.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_pricing" width="15px" height="15px"></lwtg-icon> Pricing Table</summary>
+                <p>A responsive grid of &lt;lwtg-pricing-tier&gt; columns. Every piece of content &mdash; name, price, features, call-to-action &mdash; is supplied by the caller through slots; the tier only provides the card chrome, divider, and "recommended" badge.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-pricing-table&gt;
+    &lt;lwtg-pricing-tier&gt;
+        &lt;h3&gt;Basic&lt;/h3&gt;
+        &lt;p&gt;For individuals getting started&lt;/p&gt;
+        &lt;span slot="price"&gt;$4.99&lt;/span&gt;
+        &lt;span slot="period"&gt;per user / month&lt;/span&gt;
+        &lt;lwtg-button slot="cta" variant="secondary" label="Choose Basic"&gt;&lt;/lwtg-button&gt;
+        &lt;li slot="features"&gt;Single workspace&lt;/li&gt;
+        &lt;li slot="features"&gt;Community support&lt;/li&gt;
+    &lt;/lwtg-pricing-tier&gt;
+    &lt;lwtg-pricing-tier featured badge="Recommended"&gt;
+        &lt;h3&gt;Premium&lt;/h3&gt;
+        &lt;p&gt;Align multiple teams&lt;/p&gt;
+        &lt;span slot="price"&gt;$14.54&lt;/span&gt;
+        &lt;span slot="period"&gt;per user / month&lt;/span&gt;
+        &lt;lwtg-button slot="cta" variant="primary" label="Start free trial"&gt;&lt;/lwtg-button&gt;
+        &lt;li slot="features"&gt;Cross-team planning&lt;/li&gt;
+        &lt;li slot="features"&gt;Customizable approvals&lt;/li&gt;
+        &lt;li slot="features"&gt;Priority support&lt;/li&gt;
+    &lt;/lwtg-pricing-tier&gt;
+&lt;/lwtg-pricing-table&gt;</code></pre>
+                
+                <lwtg-pricing-table>
+    <lwtg-pricing-tier>
+        <h3>Basic</h3>
+        <p>For individuals getting started</p>
+        <span slot="price">$4.99</span>
+        <span slot="period">per user / month</span>
+        <lwtg-button slot="cta" variant="secondary" label="Choose Basic"></lwtg-button>
+        <li slot="features">Single workspace</li>
+        <li slot="features">Community support</li>
+    </lwtg-pricing-tier>
+    <lwtg-pricing-tier featured badge="Recommended">
+        <h3>Premium</h3>
+        <p>Align multiple teams</p>
+        <span slot="price">$14.54</span>
+        <span slot="period">per user / month</span>
+        <lwtg-button slot="cta" variant="primary" label="Start free trial"></lwtg-button>
+        <li slot="features">Cross-team planning</li>
+        <li slot="features">Customizable approvals</li>
+        <li slot="features">Priority support</li>
+    </lwtg-pricing-tier>
+</lwtg-pricing-table>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>featured</code> &mdash; (on &lt;lwtg-pricing-tier&gt;) boolean; highlights this column.</li><li><code>badge</code> &mdash; (on &lt;lwtg-pricing-tier&gt;) badge text, default "Recommended" (only shown when featured).</li></ul><p><strong>Slots:</strong></p><ul><li><code>(default)</code> &mdash; (on &lt;lwtg-pricing-tier&gt;) name/description/any free-form header content.</li><li><code>price</code> &mdash; the large price text.</li><li><code>period</code> &mdash; small cadence text under the price.</li><li><code>cta</code> &mdash; the action button.</li><li><code>features</code> &mdash; one slotted element per feature &mdash; use &lt;li&gt; so the rendered list stays a real, accessible list.</li></ul><p><strong>Theming:</strong> --lwt-pricing-col-min, --lwt-pricing-gap (on the table); --lwt-pricing-border, --lwt-pricing-bg, --lwt-pricing-accent, --lwt-pricing-featured-bg/-color/-border (on the tier). Exposes parts: badge, header, price, divider, features.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_qr" width="15px" height="15px"></lwtg-icon> QR Code</summary>
+                <p>A QR code generator encoded entirely client-side &mdash; no image service or external library &mdash; from a from-scratch ISO/IEC 18004 implementation (byte-mode encoding, Reed-Solomon error correction, automatic version selection, penalty-scored mask selection). The version/size is picked automatically to fit <code>src</code> at the requested <code>level</code>.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-qr src="https://www.lwinter.tech" size="180" level="H"
+    color="#111827" background-color="#f9fafb" corner-color="#2563eb" radius="0.3"&gt;&lt;/lwtg-qr&gt;</code></pre>
+                
+                <lwtg-qr src="https://www.lwinter.tech" size="180" level="H"
+    color="#111827" background-color="#f9fafb" corner-color="#2563eb" radius="0.3"></lwtg-qr>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>src</code> &mdash; required; the text to encode (URL or any string), encoded as UTF-8 byte-mode data.</li><li><code>size</code> &mdash; rendered width/height in px, square (default 200).</li><li><code>level</code> &mdash; error correction "L" | "M" (default) | "Q" | "H" &mdash; higher tolerates more damage/obstruction at the cost of a bigger code.</li><li><code>background-color</code> &mdash; quiet zone + light module color (default #ffffff).</li><li><code>color</code> &mdash; dark module color (default #000000).</li><li><code>corner-color</code> &mdash; color for the three finder-pattern corner squares; falls back to color when unset.</li><li><code>radius</code> &mdash; corner roundness of each module, 0 (crisp squares, default) to 0.5 (fully circular dots).</li><li><code>margin</code> &mdash; quiet-zone width in modules around the code (default 4).</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-render</code> &mdash; detail: { version, size, level } on every successful draw.</li><li><code>lwt-error</code> &mdash; detail: { message } when src doesn't fit even at the largest spec version.</li></ul><p><strong>Theming:</strong> --lwt-qr-radius, --lwt-qr-bg, --lwt-qr-color, --lwt-qr-corner-color (fallbacks for the matching attributes; attributes take priority).</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_rive" width="15px" height="15px"></lwtg-icon> Rive Animation</summary>
+                <p>Wraps a <a href="https://rive.app" target="_blank" rel="noopener noreferrer">Rive</a> animation in a custom element, auto-loading the Rive web runtime from unpkg the first time it&apos;s needed. Size the host via CSS/width/height &mdash; Rive reads the canvas&apos;s rendered size to pick its drawing resolution.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-rive src="./media/site_hero.riv" state-machine="hero" autoplay
+    style="width:320px;height:220px;"&gt;&lt;/lwtg-rive&gt;</code></pre>
+                <p><em>Live demo omitted on this page &mdash; point <code>src</code> at your own .riv file to see it render.</em></p>
+                
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>src</code> &mdash; required; path/URL to the .riv file.</li><li><code>state-machine</code> &mdash; state machine name to run; comma-separate for more than one. Omit to just play the default artboard animation.</li><li><code>artboard</code> &mdash; optional artboard name (defaults to the file&apos;s default artboard).</li><li><code>autoplay</code> &mdash; "true" (default) | "false".</li><li><code>fit</code> &mdash; optional Rive Layout fit keyword, e.g. "Cover", "Contain", "Fill", "FitWidth", "FitHeight", "None", "ScaleDown".</li><li><code>alignment</code> &mdash; optional Rive Layout alignment keyword, e.g. "Center", "TopLeft" &mdash; only used when fit is also set.</li><li><code>width / height</code> &mdash; optional convenience CSS length for the host&apos;s size.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>rive</code> &mdash; the live rive.Rive instance once loaded, else null.</li><li><code>onLoad</code> &mdash; assignable function(riveInstance, inputs) called once loaded.</li></ul><p><strong>Methods:</strong></p><ul><li><code>getInput(name)</code> &mdash; returns the state machine input with this name, or null.</li><li><code>resize()</code> &mdash; manually resizes the drawing surface to the canvas (also automatic on load/host resize).</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-load</code> &mdash; detail: { rive, inputs }.</li><li><code>lwt-error</code> &mdash; fired if the runtime script fails to load or Rive reports a load error; detail: { error }.</li></ul>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_skill-bar" width="15px" height="15px"></lwtg-icon> Skill Bar</summary>
+                <p>One row &mdash; a label, a value, and a horizontal bar that fills to match &mdash; for things like a "Technical Skills" list. The fill animates in the first time it scrolls into view (respects prefers-reduced-motion), and later value changes smoothly transition, so it doubles as a live progress indicator.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-skill-bar label="Raster Editing: Adobe / Affinity" value="90"&gt;&lt;/lwtg-skill-bar&gt;
+&lt;lwtg-skill-bar label="3D / CGI: Blender" value="20" color="#f59e0b"&gt;&lt;/lwtg-skill-bar&gt;
+&lt;lwtg-skill-bar label="Years of experience" value="7" max="10" hide-value&gt;&lt;/lwtg-skill-bar&gt;</code></pre>
+                
+                <lwtg-skill-bar label="Raster Editing: Adobe / Affinity" value="90"></lwtg-skill-bar>
+<lwtg-skill-bar label="3D / CGI: Blender" value="20" color="#f59e0b"></lwtg-skill-bar>
+<lwtg-skill-bar label="Years of experience" value="7" max="10" hide-value></lwtg-skill-bar>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>label</code> &mdash; fallback text (overridden by slot="label").</li><li><code>value</code> &mdash; current amount; default max is 100 so this reads as a percentage.</li><li><code>max</code> &mdash; defaults to 100; a different max switches the display text from "N%" to "N / max".</li><li><code>color</code> &mdash; overrides the fill color for just this bar.</li><li><code>hide-value</code> &mdash; boolean; hides the "N%" / "N / max" text, leaving just the label and bar.</li><li><code>no-animate</code> &mdash; boolean; skip the scroll-triggered fill animation and render at full width immediately.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>value</code> &mdash; get/set number &mdash; convenience accessor over the value attribute.</li></ul><p><strong>Theming:</strong> --lwt-skill-bar-label-width, --lwt-skill-bar-value-width, --lwt-skill-bar-height, --lwt-skill-bar-track-color, --lwt-skill-bar-fill-color.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_tabs" width="15px" height="15px"></lwtg-icon> Tabs</summary>
+                <p>A tab strip (&lt;lwtg-tabs&gt;) on any of the four sides, built from matching &lt;lwtg-tab&gt; buttons and &lt;lwtg-tab-panel&gt; bodies (matched by <code>panel</code>/<code>name</code> rather than nested inside one element, since a button and its body render in two different places at once). Arrow keys move focus between non-disabled tabs; Enter/Space activates.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-tabs position="top" style="height: 220px;"&gt;
+    &lt;lwtg-tab slot="tab" panel="overview"&gt;Overview&lt;/lwtg-tab&gt;
+    &lt;lwtg-tab slot="tab" panel="settings"&gt;Settings&lt;/lwtg-tab&gt;
+    &lt;lwtg-tab slot="tab" panel="billing" disabled&gt;Billing&lt;/lwtg-tab&gt;
+
+    &lt;lwtg-tab-panel slot="panel" name="overview"&gt;&lt;p&gt;Overview content goes here.&lt;/p&gt;&lt;/lwtg-tab-panel&gt;
+    &lt;lwtg-tab-panel slot="panel" name="settings"&gt;&lt;p&gt;Settings content goes here.&lt;/p&gt;&lt;/lwtg-tab-panel&gt;
+    &lt;lwtg-tab-panel slot="panel" name="billing"&gt;&lt;p&gt;Billing content goes here.&lt;/p&gt;&lt;/lwtg-tab-panel&gt;
+&lt;/lwtg-tabs&gt;</code></pre>
+                
+                <lwtg-tabs position="top" style="height: 220px;">
+    <lwtg-tab slot="tab" panel="overview">Overview</lwtg-tab>
+    <lwtg-tab slot="tab" panel="settings">Settings</lwtg-tab>
+    <lwtg-tab slot="tab" panel="billing" disabled>Billing</lwtg-tab>
+
+    <lwtg-tab-panel slot="panel" name="overview"><p>Overview content goes here.</p></lwtg-tab-panel>
+    <lwtg-tab-panel slot="panel" name="settings"><p>Settings content goes here.</p></lwtg-tab-panel>
+    <lwtg-tab-panel slot="panel" name="billing"><p>Billing content goes here.</p></lwtg-tab-panel>
+</lwtg-tabs>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>position</code> &mdash; (on &lt;lwtg-tabs&gt;) "top" (default) | "bottom" | "left" | "right"; synced onto every child &lt;lwtg-tab&gt;.</li><li><code>active</code> &mdash; (on &lt;lwtg-tabs&gt;) optional; the panel name to select initially, read once at connect.</li><li><code>panel</code> &mdash; (on &lt;lwtg-tab&gt;) required; matches the controlled &lt;lwtg-tab-panel&gt;&apos;s name.</li><li><code>disabled</code> &mdash; (on &lt;lwtg-tab&gt;) boolean; blocks click/keyboard activation.</li><li><code>name</code> &mdash; (on &lt;lwtg-tab-panel&gt;) required; matched against the active tab&apos;s panel value.</li></ul><p><strong>Slots:</strong></p><ul><li><code>tab</code> &mdash; named slot on &lt;lwtg-tabs&gt; for each &lt;lwtg-tab&gt; button.</li><li><code>panel</code> &mdash; named slot on &lt;lwtg-tabs&gt; for each &lt;lwtg-tab-panel&gt; body.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>activePanel</code> &mdash; (on &lt;lwtg-tabs&gt;) getter, currently active panel name.</li></ul><p><strong>Methods:</strong></p><ul><li><code>selectTab(panelName)</code> &mdash; (on &lt;lwtg-tabs&gt;) programmatically activate a tab.</li><li><code>addTab({ panel, label, content, active, disabled })</code> &mdash; (on &lt;lwtg-tabs&gt;) creates and appends a matching tab/panel pair; returns { tab, panel, panelName }.</li><li><code>removeTab(panelName)</code> &mdash; (on &lt;lwtg-tabs&gt;) removes both halves of a tab.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-change</code> &mdash; (on &lt;lwtg-tabs&gt;) detail: { panel } &mdash; fired on selection change (not for the initial selection).</li></ul><p><strong>Theming:</strong> --lwt-tabs-border, --lwt-tabs-tab-color, --lwt-tabs-active-color, --lwt-tabs-focus-color, --lwt-tabs-bar-size.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_toast" width="15px" height="15px"></lwtg-icon> Toast</summary>
+                <p>A transient, corner-stacked notification manager &mdash; the counterpart to the persistent inline Alert above. Place one &lt;lwtg-toast&gt; in your page; everything else is driven through <code>.show()</code> (or the <code>window.LWT.toast.success(...)</code> style shorthands) rather than attributes.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-button onclick="document.getElementById('demo-toast').show({variant:'success', title:'Saved', message:'Your changes have been saved.'})"&gt;Show Toast&lt;/lwtg-button&gt;
+&lt;lwtg-toast id="demo-toast" position="top-right"&gt;&lt;/lwtg-toast&gt;</code></pre>
+                
+                <lwtg-button onclick="document.getElementById('demo-toast').show({variant:'success', title:'Saved', message:'Your changes have been saved.'})">Show Toast</lwtg-button>
+<lwtg-toast id="demo-toast" position="top-right"></lwtg-toast>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>position</code> &mdash; read once at connect (not reactive afterward); corner the toast stack appears in, e.g. "top-right".</li></ul><p><strong>Methods:</strong></p><ul><li><code>show(options)</code> &mdash; spawns a toast; options: variant ("info"|"success"|"warning"|"error"), title, message (plain text), duration (ms, default 4000, &le;0 = stays until closed). Returns an id string.</li><li><code>close(id)</code> &mdash; removes one toast early.</li><li><code>clear()</code> &mdash; removes every toast.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-show</code> &mdash; detail: { id, variant }.</li><li><code>lwt-close</code> &mdash; detail: { id, reason: 'timeout'|'dismiss'|'api' }.</li></ul><p><strong>Theming:</strong> --lwt-toast-bg, --lwt-toast-success-color, --lwt-toast-warning-color, --lwt-toast-info-color, --lwt-toast-error-color, --lwt-toast-gap, --lwt-toast-offset.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_tree" width="15px" height="15px"></lwtg-icon> Tree</summary>
+                <p>A hierarchical, expandable/collapsible list built from nested &lt;lwtg-tree-item&gt; elements. Add the <code>checkable</code> attribute for cascading checkbox selection (checking a branch checks every descendant; indeterminate state shows when only some children are checked); without it, clicking a row single-selects it.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtg-tree checkable&gt;
+    &lt;lwtg-tree-item label="Small" expanded checked&gt;
+        &lt;lwtg-tree-item label="Newsletters" data-value="newsletters" checked&gt;&lt;/lwtg-tree-item&gt;
+        &lt;lwtg-tree-item label="Promotions" expanded checked&gt;
+            &lt;lwtg-tree-item label="Weekly deals" data-value="weekly-deals" checked&gt;&lt;/lwtg-tree-item&gt;
+            &lt;lwtg-tree-item label="Seasonal sales" data-value="seasonal-sales" checked&gt;&lt;/lwtg-tree-item&gt;
+        &lt;/lwtg-tree-item&gt;
+    &lt;/lwtg-tree-item&gt;
+&lt;/lwtg-tree&gt;</code></pre>
+                
+                <lwtg-tree checkable>
+    <lwtg-tree-item label="Small" expanded checked>
+        <lwtg-tree-item label="Newsletters" data-value="newsletters" checked></lwtg-tree-item>
+        <lwtg-tree-item label="Promotions" expanded checked>
+            <lwtg-tree-item label="Weekly deals" data-value="weekly-deals" checked></lwtg-tree-item>
+            <lwtg-tree-item label="Seasonal sales" data-value="seasonal-sales" checked></lwtg-tree-item>
+        </lwtg-tree-item>
+    </lwtg-tree-item>
+</lwtg-tree>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>checkable</code> &mdash; (on &lt;lwtg-tree&gt;) boolean; toggles checkbox rendering + cascading selection, synced onto every descendant item automatically.</li><li><code>label</code> &mdash; (on &lt;lwtg-tree-item&gt;) fallback text (overridden by slot="label").</li><li><code>data-value</code> &mdash; (on &lt;lwtg-tree-item&gt;) a leaf&apos;s return value, surfaced by .getSelectedLeaves().</li><li><code>expanded</code> &mdash; (on &lt;lwtg-tree-item&gt;) read once at connect for branches; ignored on leaves.</li><li><code>checked</code> &mdash; (on &lt;lwtg-tree-item&gt;) read once at connect as ground truth for leaves only &mdash; on branches it&apos;s always derived from children.</li><li><code>selected</code> &mdash; (on &lt;lwtg-tree-item&gt;) non-checkable mode only; managed by the parent tree.</li><li><code>disabled</code> &mdash; (on &lt;lwtg-tree-item&gt;) boolean; blocks interaction on this row only (does not cascade).</li></ul><p><strong>Slots:</strong></p><ul><li><code>label</code> &mdash; (on &lt;lwtg-tree-item&gt;) named slot for rich label content.</li><li><code>(default)</code> &mdash; (on &lt;lwtg-tree-item&gt;) nested &lt;lwtg-tree-item&gt; children.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>checked, selected</code> &mdash; (on &lt;lwtg-tree-item&gt;) get/set.</li><li><code>isExpanded, isLeaf, labelText</code> &mdash; (on &lt;lwtg-tree-item&gt;) get, read-only.</li></ul><p><strong>Methods:</strong></p><ul><li><code>addItem({ label, value, expanded, checked, disabled }, parentItem?)</code> &mdash; (on &lt;lwtg-tree&gt;, or directly on an item) creates and appends a new item.</li><li><code>removeItem(item)</code> &mdash; (on &lt;lwtg-tree&gt;) removes an item and everything nested under it.</li><li><code>getSelectedLeaves()</code> &mdash; (on &lt;lwtg-tree&gt;) returns [{ label, value, element }] for every checked/selected leaf.</li><li><code>expand() / collapse() / toggleExpand()</code> &mdash; (on &lt;lwtg-tree-item&gt;) control a branch.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-change</code> &mdash; (on &lt;lwtg-tree&gt;) fired whenever any check/selection state changes anywhere in the tree.</li></ul><p><strong>Theming:</strong> --lwt-tree-chevron-color, --lwt-tree-check-color, --lwt-tree-label-color, --lwt-tree-selected-bg, --lwt-tree-indent, --lwt-tree-focus-color.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_whitespace" width="15px" height="15px"></lwtg-icon> Whitespace</summary>
+                <p>A simple blank spacer for deliberate vertical (or horizontal) gaps between elements, without reaching for margin hacks or empty spacer divs.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;div style="background:#eef2ff;padding:4px;"&gt;Above&lt;/div&gt;
+&lt;lwtg-whitespace height="2rem"&gt;&lt;/lwtg-whitespace&gt;
+&lt;div style="background:#eef2ff;padding:4px;"&gt;Below (2rem gap)&lt;/div&gt;</code></pre>
+                
+                <div style="background:#eef2ff;padding:4px;">Above</div>
+<lwtg-whitespace height="2rem"></lwtg-whitespace>
+<div style="background:#eef2ff;padding:4px;">Below (2rem gap)</div>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>height</code> &mdash; any valid CSS length (e.g. "2rem", "48px"); a bare number is treated as pixels. Default "1rem".</li><li><code>width</code> &mdash; optional CSS length for the inline dimension; same bare-number-as-px rule. Default "auto".</li><li><code>axis</code> &mdash; "block" (default, sizes by height) | "inline" (sizes by width instead, for a horizontal gap in a flex row).</li></ul>
+            </details>
+
+        </details>
+
+        <details class="accordion-section">
+            <summary><span></span>Form Elements</summary>
+            <p>These elements are part of the CDNA forms library (<code>lwt-forms.js</code>). Every one of them participates in a native <code>&lt;form&gt;</code> via the ElementInternals API, so a <code>name</code> attribute submits like a regular form control.</p>
+            <br/>
+
+            <details>
+                <summary><lwtg-icon icon="app_choices" width="15px" height="15px"></lwtg-icon> Choices (radio / checkbox group)</summary>
+                <p>Custom-drawn radio buttons or checkboxes &mdash; no native &lt;input type="radio"/"checkbox"&gt; and no manual label/for/id wiring. Defaults to single-select; set <code>type="multiple"</code> for independent checkboxes. Options can also be built entirely from JS via <code>.options</code>.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtf-choices label="Shipping speed" name="speed" required&gt;
+    &lt;lwtf-choice-option value="standard" checked&gt;Standard (5-7 days)&lt;/lwtf-choice-option&gt;
+    &lt;lwtf-choice-option value="express"&gt;Express (2 days)&lt;/lwtf-choice-option&gt;
+    &lt;lwtf-choice-option value="overnight" disabled&gt;Overnight (unavailable)&lt;/lwtf-choice-option&gt;
+&lt;/lwtf-choices&gt;
+
+&lt;lwtf-choices type="multiple" label="Toppings" name="toppings" direction="horizontal"&gt;
+    &lt;lwtf-choice-option value="cheese" checked&gt;Cheese&lt;/lwtf-choice-option&gt;
+    &lt;lwtf-choice-option value="pepperoni"&gt;Pepperoni&lt;/lwtf-choice-option&gt;
+&lt;/lwtf-choices&gt;</code></pre>
+                
+                <lwtf-choices label="Shipping speed" name="speed" required>
+    <lwtf-choice-option value="standard" checked>Standard (5-7 days)</lwtf-choice-option>
+    <lwtf-choice-option value="express">Express (2 days)</lwtf-choice-option>
+    <lwtf-choice-option value="overnight" disabled>Overnight (unavailable)</lwtf-choice-option>
+</lwtf-choices>
+
+<lwtf-choices type="multiple" label="Toppings" name="toppings" direction="horizontal">
+    <lwtf-choice-option value="cheese" checked>Cheese</lwtf-choice-option>
+    <lwtf-choice-option value="pepperoni">Pepperoni</lwtf-choice-option>
+</lwtf-choices>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>label, helper, error, name</code> &mdash; display / form basics.</li><li><code>type</code> &mdash; "single" (default, radio behavior) | "multiple" (checkbox behavior).</li><li><code>direction</code> &mdash; "vertical" (default) | "horizontal" &mdash; for plain (non-image) options.</li><li><code>layout</code> &mdash; "list" (default) | "grid" &mdash; "grid" arranges options in a responsive grid of image tiles.</li><li><code>required</code> &mdash; boolean; at least one option must be checked.</li><li><code>disabled</code> &mdash; boolean; disables the whole group (each option remembers its own disabled state for when the group re-enables).</li><li><code>value, checked, disabled, role, image, accent</code> &mdash; (on &lt;lwtf-choice-option&gt;) see its own attributes &mdash; <code>image</code> renders the option as a tile instead of a row, <code>accent</code> colors that tile.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>value</code> &mdash; get/set array of currently-checked values (0 or 1 entries for type="single", 0..n for "multiple").</li><li><code>options</code> &mdash; get/set the full option list as [{value, label, disabled, checked}]; the setter replaces every option.</li></ul><p><strong>Methods:</strong></p><ul><li><code>setValue(newValues, opts)</code> &mdash; same as .value = newValues, but opts: {silent:true} skips the lwt-change emit.</li><li><code>addOption(opt) / updateOption(value, patch) / removeOption(value)</code> &mdash; build options from JS: {value, label, disabled?, checked?, image?, accent?}.</li><li><code>clear()</code> &mdash; unchecks every option.</li><li><code>checkValidity() / reportValidity()</code> &mdash; matches native form control validity.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-change</code> &mdash; detail: { value: [...] } &mdash; fires on click, keyboard, or a non-silent value/API change.</li></ul><p><strong>Form participation:</strong> uses ElementInternals, so <code>name="&hellip;"</code> submits like a native radio/checkbox group inside a &lt;form&gt;.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_color-picker" width="15px" height="15px"></lwtg-icon> Color Picker</summary>
+                <p>A Photoshop-style color picker switchable between HSL color wheel, RGB sliders, HSL sliders, and CMYK sliders, with a fixed output panel always showing R/G/B, H/S/L, hex, and C/M/Y/K in sync against one internal HSLA model.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtf-color-picker value="#3b82f6" format="hex" mode="hsl"&gt;&lt;/lwtf-color-picker&gt;</code></pre>
+                
+                <lwtf-color-picker value="#3b82f6" format="hex" mode="hsl"></lwtf-color-picker>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>value</code> &mdash; initial color (hex, rgb()/rgba(), or hsl()/hsla()); read once on connect.</li><li><code>format</code> &mdash; 'hex' | 'rgb' | 'hsl' &mdash; controls what .value returns (default 'hex').</li><li><code>mode</code> &mdash; initial interactive mode, read once on connect: 'hsl-wheel' | 'rgb' | 'hsl' (default) | 'cmyk'. Drive changes afterward via .mode, not by re-setting this attribute.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>value, hex, rgba, hsla, cmyk, mode</code> &mdash; get/set &mdash; .value is a string in the chosen format; .rgba/.hsla/.cmyk are plain objects; .mode switches the active panel.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwtf-input</code> &mdash; fires continuously while dragging/typing; detail: { value, hex, rgba, hsla, cmyk }.</li><li><code>lwt-change</code> &mdash; fires once when a drag ends or a field is committed; same detail shape.</li></ul>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_date-range" width="15px" height="15px"></lwtg-icon> Date Range</summary>
+                <p>A booking-site-style date range picker: a compact trigger field that opens a popup with a preset sidebar (Today / Yesterday / Last 7 days / &hellip;), side-by-side month calendars with a shared pager, and an optional time-of-day range slider.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtf-date-range label="Stay dates" months="2"
+    value="2026-11-06,2026-11-22" min="2026-01-01" max="2026-12-31"&gt;&lt;/lwtf-date-range&gt;</code></pre>
+                
+                <lwtf-date-range label="Stay dates" months="2"
+    value="2026-11-06,2026-11-22" min="2026-01-01" max="2026-12-31"></lwtf-date-range>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>label, helper, error, placeholder</code> &mdash; display / form basics.</li><li><code>value</code> &mdash; initial "start,end" ISO date pair (or ISO datetimes when <code>time</code> is set); read once at connect, use .value after.</li><li><code>name</code> &mdash; form field name.</li><li><code>months</code> &mdash; how many side-by-side calendars to show (default 2).</li><li><code>time</code> &mdash; boolean; adds a 00:00&ndash;23:59 time-of-day range slider per end.</li><li><code>min, max</code> &mdash; ISO date bounds; days/navigation outside this range are disabled.</li><li><code>presets</code> &mdash; comma list overriding which preset shortcuts show, from: today, yesterday, last7, last15, lastmonth, custom.</li><li><code>no-presets</code> &mdash; boolean; hides the preset sidebar entirely.</li><li><code>required, disabled, readonly</code> &mdash; standard form states.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>value</code> &mdash; get/set array [start, end] (empty array if unset).</li><li><code>valueAsDates</code> &mdash; read-only [Date, Date] or [null, null].</li></ul><p><strong>Methods:</strong></p><ul><li><code>setRange(start, end)</code> &mdash; programmatic set; Date objects or ISO strings. {silent:true} to skip events.</li><li><code>clear() / open() / close() / toggle()</code> &mdash; popup and value control.</li><li><code>checkValidity() / reportValidity() / focus() / blur()</code> &mdash; standard form helpers, proxied to the trigger field.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwtf-input</code> &mdash; every draft change while the popup is open; detail: { value } (in-progress draft).</li><li><code>lwt-change</code> &mdash; Apply pressed, or .value/.setRange() called; detail: { value }.</li><li><code>lwt-preset</code> &mdash; a preset shortcut was picked; detail: { preset, value }.</li><li><code>lwt-open / lwt-close</code> &mdash; popup opened/closed.</li></ul><p><strong>Form participation:</strong> uses ElementInternals &mdash; submits two form entries under <code>name</code> (start and end). <code>required</code> is satisfied only once both ends are set.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_input" width="15px" height="15px"></lwtg-icon> Input</summary>
+                <p>A themed text-style input covering every single-line HTML input type except radio/checkbox/file/color. Hand it an <code>options</code> array (strings or rich {value,label,html} objects) and it grows into a full ARIA-combobox lookup with per-option HTML tooltips.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtf-input label="Full name" placeholder="Jane Doe" required&gt;&lt;/lwtf-input&gt;
+&lt;lwtf-input type="number" label="Quantity" min="1" max="10" step="1" value="1"&gt;&lt;/lwtf-input&gt;
+&lt;lwtf-input type="date" label="Start date"&gt;&lt;/lwtf-input&gt;</code></pre>
+                
+                <lwtf-input label="Full name" placeholder="Jane Doe" required></lwtf-input>
+<lwtf-input type="number" label="Quantity" min="1" max="10" step="1" value="1"></lwtf-input>
+<lwtf-input type="date" label="Start date"></lwtf-input>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>label, helper, error, placeholder, name</code> &mdash; display / form basics.</li><li><code>value</code> &mdash; initial value; read once at connect (use .value after).</li><li><code>type</code> &mdash; "text" (default), "email", "tel", "url", "search", "password" (gets a show/hide toggle), "number", "date", "month", "week", "time". Not radio/checkbox/file/color &mdash; those have their own elements.</li><li><code>required, disabled, readonly</code> &mdash; standard form states.</li><li><code>pattern, minlength, maxlength</code> &mdash; native validation; text-like types only.</li><li><code>min, max, step</code> &mdash; native range for number/date/month/week/time.</li><li><code>autocomplete</code> &mdash; passes through to the native input when options aren&apos;t set (forced "off" when they are).</li><li><code>strict</code> &mdash; boolean; combobox only &mdash; value must match one of the options, else reverts on blur.</li><li><code>max-visible</code> &mdash; max option rows visible before the dropdown scrolls (default 8).</li><li><code>show-counter</code> &mdash; boolean; force the "N / max" counter to show even without maxlength.</li></ul><p><strong>Slots:</strong></p><ul><li><code>icon-leading</code> &mdash; anything (SVG, emoji) shown at the field&apos;s left edge.</li><li><code>icon-trailing</code> &mdash; same, shown at the right, next to any built-in controls.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>value</code> &mdash; get/set the current string.</li><li><code>options</code> &mdash; get/set a lookup array of strings or {value,label,html?,disabled?} to turn the field into a combobox (text-like types only) &mdash; e.g. <code>el.options = ['Apple', 'Banana', 'Cherry']</code>.</li></ul><p><strong>Methods:</strong></p><ul><li><code>checkValidity() / reportValidity()</code> &mdash; matches native form control validity.</li><li><code>clear() / focus() / blur()</code> &mdash; standard helpers.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwtf-input</code> &mdash; every keystroke; detail: { value }.</li><li><code>lwt-change</code> &mdash; commit (blur / Enter); detail: { value }.</li><li><code>lwtf-select</code> &mdash; option picked from a combobox dropdown; detail: { value, option }.</li><li><code>lwt-clear</code> &mdash; clear button pressed.</li></ul><p><strong>Form participation:</strong> uses ElementInternals, so <code>name="&hellip;"</code> submits like a native &lt;input&gt;, including required/pattern/minlength/maxlength/min/max/step validity.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_otp" width="15px" height="15px"></lwtg-icon> OTP / Verification Code</summary>
+                <p>A split-box verification code input (2FA style): one native character box per digit, auto-advancing focus, backspace/arrow navigation, full paste support, and OS-level SMS autofill via a hidden autocomplete="one-time-code" field.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtf-otp label="Verify" helper="Your code was sent to you via email" length="6"&gt;&lt;/lwtf-otp&gt;</code></pre>
+                
+                <lwtf-otp label="Verify" helper="Your code was sent to you via email" length="6"></lwtf-otp>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>label, helper, error</code> &mdash; display / form basics.</li><li><code>value</code> &mdash; initial code; read once at connect.</li><li><code>length</code> &mdash; number of boxes (default 6).</li><li><code>type</code> &mdash; "numeric" (default, numeric keypad) | "alphanumeric".</li><li><code>name, required, disabled, readonly</code> &mdash; standard form states.</li><li><code>auto-focus</code> &mdash; boolean; focuses the first empty box as soon as the element connects.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>value</code> &mdash; get/set the code as a plain string; get returns whatever is filled even if incomplete.</li></ul><p><strong>Methods:</strong></p><ul><li><code>clear()</code> &mdash; empties every box (fires lwtf-input).</li><li><code>focus() / blur() / checkValidity() / reportValidity()</code> &mdash; standard helpers.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwtf-input</code> &mdash; every box change; detail: { value }.</li><li><code>lwt-change</code> &mdash; a box loses focus after a change; detail: { value }.</li><li><code>lwt-complete</code> &mdash; fires the instant every box becomes filled (and again if cleared/refilled); detail: { value }.</li></ul><p><strong>Form participation:</strong> uses ElementInternals; <code>required</code> is satisfied only once every box is filled.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_select" width="15px" height="15px"></lwtg-icon> Select (combobox / tags)</summary>
+                <p>A combobox supporting single- or multi-select with rich HTML options and per-option tooltips. Selections always render as removable tag chips, so an option&apos;s rich content (an icon, a color swatch) shows up for the selected state too, not just in the dropdown.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtf-select label="City" placeholder="Search cities&amp;hellip;" multiple&gt;
+    &lt;lwtf-select-option value="ams"&gt;Amsterdam&lt;/lwtf-select-option&gt;
+    &lt;lwtf-select-option value="ber"&gt;Berlin&lt;/lwtf-select-option&gt;
+    &lt;lwtf-select-option value="ath" disabled&gt;Athens&lt;/lwtf-select-option&gt;
+&lt;/lwtf-select&gt;</code></pre>
+                
+                <lwtf-select label="City (multiple)" placeholder="Search cities&hellip;" multiple>
+                    <lwtf-select-option value="ams">Amsterdam</lwtf-select-option>
+                    <lwtf-select-option value="ber">Berlin</lwtf-select-option>
+                    <lwtf-select-option value="ath" disabled>Athens</lwtf-select-option>
+                </lwtf-select>
+
+                <lwtf-select label="City (single)" placeholder="Search cities&hellip;">
+                    <lwtf-select-option value="ams">Amsterdam</lwtf-select-option>
+                    <lwtf-select-option value="ber">Berlin</lwtf-select-option>
+                    <lwtf-select-option value="ath" disabled>Athens</lwtf-select-option>
+                </lwtf-select>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>label, helper, error, placeholder, name</code> &mdash; display / form basics.</li><li><code>multiple</code> &mdash; boolean; allow more than one tag. Without it, picking a new option replaces the existing tag.</li><li><code>max-selections</code> &mdash; integer; caps how many tags multiple allows.</li><li><code>max-visible</code> &mdash; max dropdown rows visible before it scrolls (default 8).</li><li><code>required, disabled, readonly</code> &mdash; standard form states.</li></ul><p><strong>Slots:</strong></p><ul><li><code>tooltip</code> &mdash; (inside a &lt;lwtf-select-option&gt;, via &lt;template slot="tooltip"&gt;) rich HTML shown on hover in the dropdown.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>value</code> &mdash; get/set array of selected values &mdash; always an array, even in single-select mode.</li><li><code>options</code> &mdash; get/set the full option list as [{value, label, disabled, selected, html}]; setter replaces every option.</li></ul><p><strong>Methods:</strong></p><ul><li><code>addOption(opt) / updateOption(value, patch) / removeOption(value)</code> &mdash; build options from JS: {value, label, disabled?, selected?, html?}.</li><li><code>clear() / checkValidity() / reportValidity()</code> &mdash; standard helpers.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwtf-input</code> &mdash; every selection/removal while interacting; detail: { value: [...] }.</li><li><code>lwt-change</code> &mdash; commit (tag added/removed, or dropdown closes); detail: { value: [...] }.</li><li><code>lwtf-select</code> &mdash; an option was picked; detail: { value, option }.</li><li><code>lwt-remove</code> &mdash; a tag was removed (&times; or Backspace); detail: { value, option }.</li></ul><p><strong>Form participation:</strong> uses ElementInternals, so <code>name="&hellip;"</code> submits one entry per selected value.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_signature" width="15px" height="15px"></lwtg-icon> Signature</summary>
+                <p>A digital signature input. Defaults to "type" mode (type a name, pick a script/cursive font, see a live preview on a signing line); an optional "draw" mode (on by default, turn off with <code>no-draw</code>) switches to a canvas signed with mouse/touch/pen.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtf-signature label="Sign here" fonts="Dancing Script;Pacifico;Satisfy;Caveat"&gt;&lt;/lwtf-signature&gt;</code></pre>
+                
+                <lwtf-signature label="Sign here" fonts="Dancing Script;Pacifico;Satisfy;Caveat"></lwtf-signature>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>label, helper, error</code> &mdash; display / form basics.</li><li><code>name, required, disabled, readonly</code> &mdash; standard form states.</li><li><code>mode</code> &mdash; "type" (default) | "draw" &mdash; which panel is active on connect.</li><li><code>no-draw</code> &mdash; boolean; hides the Type/Draw tabs and removes draw mode entirely.</li><li><code>fonts</code> &mdash; semicolon-separated CSS font-family list offered in type mode. Load real script fonts yourself (e.g. a Google Fonts &lt;link&gt;) &mdash; this element only offers them, it doesn&apos;t fetch any.</li><li><code>pen-color</code> &mdash; stroke color for draw mode (default: currentColor, falls back to #111827).</li><li><code>value</code> &mdash; initial typed name; read once at connect, type mode only.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>value</code> &mdash; get/set; get returns { mode, text, font } (type) or { mode, dataUrl } (draw).</li><li><code>mode</code> &mdash; get/set "type" | "draw".</li></ul><p><strong>Methods:</strong></p><ul><li><code>toDataURL()</code> &mdash; PNG data URL of the current signature either way.</li><li><code>isEmpty()</code> &mdash; true if nothing is typed/drawn.</li><li><code>clear() / checkValidity() / reportValidity()</code> &mdash; standard helpers.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwtf-input</code> &mdash; every keystroke/stroke; detail: { value }.</li><li><code>lwt-change</code> &mdash; commit (blur, or pointerup after a stroke); detail: { value }.</li><li><code>lwt-mode-change</code> &mdash; the Type/Draw tab changed; detail: { mode }.</li></ul><p><strong>Form participation:</strong> uses ElementInternals; the submitted form value is always the rendered PNG via .toDataURL(). <code>required</code> is satisfied once .isEmpty() is false.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_slider" width="15px" height="15px"></lwtg-icon> Slider</summary>
+                <p>A range slider supporting any number of handles &mdash; one plain slider, a dual-handle range, or N handles carving the track into segments. Segment coloring between/around handles is CSS-driven via <code>::part(segment-N)</code> or <code>--lwt-slider-segment-N</code>.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtf-slider label="Volume" value="40"&gt;&lt;/lwtf-slider&gt;
+&lt;lwtf-slider label="Price range" min="0" max="500" step="10" value="100,350" ticks tooltip="hover" unit="$"&gt;&lt;/lwtf-slider&gt;</code></pre>
+                
+                <lwtf-slider label="Volume" value="40"></lwtf-slider>
+<lwtf-slider label="Price range" min="0" max="500" step="10" value="100,350" ticks tooltip="hover" unit="$"></lwtf-slider>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>label, helper, error</code> &mdash; display / form basics.</li><li><code>min, max, step</code> &mdash; numeric range (defaults 0, 100, 1).</li><li><code>value</code> &mdash; initial "v1,v2,&hellip;" pair; handle count follows the count of values given. Read once at connect, use .value after.</li><li><code>name, required, disabled, readonly</code> &mdash; standard form states.</li><li><code>ticks</code> &mdash; boolean; draws tick marks (and labels) along the track.</li><li><code>tick-step</code> &mdash; spacing between ticks, in value units.</li><li><code>label-format</code> &mdash; "" (default, plain number + optional unit) | "time" (minutes-since-midnight, formatted "9 AM" style).</li><li><code>unit</code> &mdash; string appended to plain-number labels, e.g. "%".</li><li><code>tooltip</code> &mdash; "none" (default) | "hover" | "always".</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>value</code> &mdash; get/set array of numbers, one per handle; setting a longer/shorter array changes the handle count.</li><li><code>formatLabel</code> &mdash; assignable function(value) -&gt; string; overrides label-format for both ticks and tooltips.</li></ul><p><strong>Methods:</strong></p><ul><li><code>focus() / blur() / checkValidity() / reportValidity()</code> &mdash; standard helpers; focus/blur proxy to the first handle.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwtf-input</code> &mdash; every value change while dragging/stepping; detail: { value, index }.</li><li><code>lwt-change</code> &mdash; a drag/keyboard interaction ends with a changed value, or .value was set; detail: { value }.</li></ul><p><strong>Form participation:</strong> uses ElementInternals &mdash; submits one form entry per handle under <code>name</code>.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_transfer-list" width="15px" height="15px"></lwtg-icon> Transfer List</summary>
+                <p>A two-column "available / selected" picker &mdash; highlight items on the left, click Add to move them right (or double-click), Remove to send them back, and optionally reorder the right column with Move Up/Down. The classic dual-listbox pattern for report column pickers or sort-order builders.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtf-transfer-list label="Fields" name="fields" sortable
+    available-label="Available fields:" selected-label="Sort order:"&gt;
+    &lt;lwtf-transfer-option value="cars"&gt;Cars&lt;/lwtf-transfer-option&gt;
+    &lt;lwtf-transfer-option value="children"&gt;Children&lt;/lwtf-transfer-option&gt;
+    &lt;lwtf-transfer-option value="bikeBuyer" selected&gt;BikeBuyer&lt;/lwtf-transfer-option&gt;
+&lt;/lwtf-transfer-list&gt;</code></pre>
+                
+                <lwtf-transfer-list label="Fields" name="fields" sortable
+    available-label="Available fields:" selected-label="Sort order:">
+    <lwtf-transfer-option value="cars">Cars</lwtf-transfer-option>
+    <lwtf-transfer-option value="children">Children</lwtf-transfer-option>
+    <lwtf-transfer-option value="bikeBuyer" selected>BikeBuyer</lwtf-transfer-option>
+</lwtf-transfer-list>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>label, helper, error, name</code> &mdash; display / form basics.</li><li><code>available-label</code> &mdash; left column heading (default "Available").</li><li><code>selected-label</code> &mdash; right column heading (default "Selected").</li><li><code>sortable</code> &mdash; boolean; shows Move Up / Move Down buttons for reordering the right column.</li><li><code>size</code> &mdash; visible row count of each listbox (default 8).</li><li><code>required</code> &mdash; boolean; at least one item must end up in the selected column.</li><li><code>disabled</code> &mdash; boolean; disables the whole control.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>value</code> &mdash; get/set array of selected values, in right-column order.</li><li><code>options</code> &mdash; get/set the full item list as [{value, label, selected}]; setter replaces the entire universe of items.</li></ul><p><strong>Methods:</strong></p><ul><li><code>setValue(newValues, opts)</code> &mdash; {silent:true} to skip the lwt-change emit.</li><li><code>addOption(opt) / updateOption(value, patch) / removeOption(value)</code> &mdash; build items from JS: {value, label, selected?}.</li><li><code>clear() / checkValidity() / reportValidity()</code> &mdash; standard helpers.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-change</code> &mdash; fires on Add, Remove, Move Up/Down, double-click, or a non-silent value/API change; detail: { value: [...] }.</li></ul><p><strong>Form participation:</strong> uses ElementInternals, so <code>name="&hellip;"</code> submits one entry per selected value, in right-column order.</p>
+            </details>
+
+        </details>
+
+        <details class="accordion-section">
+            <summary><span></span>Dashboard Elements</summary>
+            <p>These elements are part of the CDNA dashboard library (<code>lwt-dashboard.js</code>) &mdash; charts and KPI tiles rendered as inline SVG, with no external charting dependency. Most charts take their data through a JS <code>.data</code> property (a Chart.js-compatible shape) rather than attributes, since that data is structured, not a flat string; style options stay plain attributes.</p>
+            <br/>
+
+            <details>
+                <summary><lwtg-icon icon="app_bar-chart" width="15px" height="15px"></lwtg-icon> Bar Chart</summary>
+                <p>A bar chart rendered as inline SVG (no Chart.js dependency, but a Chart.js-compatible <code>data</code> shape), redrawn whenever <code>.data</code> or a style attribute changes. Supports grouped or stacked bars, horizontal orientation, and dashed goal/target reference lines.</p>
+                <h4>Implementation</h4>
+                <pre><code>var chart = document.querySelector('lwtd-bar-chart');
+chart.data = {
+  labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+  datasets: [
+    { label: 'Online',   data: [42, 58, 63, 71] },
+    { label: 'In-Store', data: [65, 53, 48, 52], backgroundColor: '#f9a8d4', borderColor: '#ec4899' },
+    { label: 'Wholesale', data: [28, 32, 35, 40] }
+  ]
+};</code></pre>
+                
+                <lwtd-bar-chart id="demo-lwtd-bar-chart" title="Quarterly Sales" style="max-width:480px;"></lwtd-bar-chart>
+<script>
+  document.getElementById('demo-lwtd-bar-chart').data = {
+    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+    datasets: [
+      { label: 'Online',   data: [42, 58, 63, 71] },
+      { label: 'In-Store', data: [65, 53, 48, 52], backgroundColor: '#f9a8d4', borderColor: '#ec4899' },
+      { label: 'Wholesale', data: [28, 32, 35, 40] }
+    ]
+  };
+</script>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>title</code> &mdash; chart title text.</li><li><code>orientation</code> &mdash; "vertical" (default) | "horizontal".</li><li><code>stacked</code> &mdash; boolean; stacks datasets instead of grouping them.</li><li><code>legend-position</code> &mdash; "top" (default) | "bottom" | "left" | "right" | "none".</li><li><code>grid</code> &mdash; "both" (default) | "horizontal" | "vertical" | "none".</li><li><code>x-label / y-label</code> &mdash; category / value axis titles.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>data</code> &mdash; set only &mdash; { labels: [...], datasets: [{ label, data, backgroundColor?, borderColor? }], targetLine?: {label,value,color?}, targetLines?: [...] }. Colors cycle through a built-in pastel palette when omitted.</li></ul><p><strong>Theming:</strong> --lwt-chart-bg, --lwt-chart-grid, --lwt-chart-border, --lwt-chart-tick-color, --lwt-chart-title-color, --lwt-chart-legend-color, --lwt-chart-target-color, --lwt-chart-aspect-ratio (default 8/5).</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_bubble-chart" width="15px" height="15px"></lwtg-icon> Bubble Chart</summary>
+                <p>Two numeric axes (x, y) plus a per-point radius (r), matching Chart.js&apos;s bubble format. Both axes auto-scale to "nice" numbers around the actual data range rather than forcing a zero baseline.</p>
+                <h4>Implementation</h4>
+                <pre><code>var chart = document.querySelector('lwtd-bubble-chart');
+chart.data = {
+  datasets: [
+    { label: 'North America', data: [{ x: 65, y: 7.8, r: 20 }, { x: 55, y: 7.5, r: 14 }, { x: 50, y: 7.0, r: 12 }] },
+    { label: 'Europe', data: [{ x: 40, y: 8.2, r: 18 }, { x: 45, y: 8.0, r: 14 }, { x: 30, y: 7.6, r: 10 }] }
+  ]
+};</code></pre>
+                
+                <lwtd-bubble-chart id="demo-lwtd-bubble-chart" title="Market Position" x-label="Market Share %" y-label="Growth %" style="max-width:480px;"></lwtd-bubble-chart>
+<script>
+  document.getElementById('demo-lwtd-bubble-chart').data = {
+    datasets: [
+      { label: 'North America', data: [{ x: 65, y: 7.8, r: 20 }, { x: 55, y: 7.5, r: 14 }, { x: 50, y: 7.0, r: 12 }] },
+      { label: 'Europe', data: [{ x: 40, y: 8.2, r: 18 }, { x: 45, y: 8.0, r: 14 }, { x: 30, y: 7.6, r: 10 }] }
+    ]
+  };
+</script>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>title</code> &mdash; chart title text.</li><li><code>bubble-scale</code> &mdash; multiplier applied to every point&apos;s r (default 1).</li><li><code>legend-position</code> &mdash; "top" (default) | "bottom" | "left" | "right" | "none".</li><li><code>grid</code> &mdash; "both" (default) | "horizontal" | "vertical" | "none".</li><li><code>x-label / y-label</code> &mdash; axis titles.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>data</code> &mdash; set only &mdash; { datasets: [{ label, data: [{x, y, r}], backgroundColor?, borderColor? }] }. <code>r</code> is a literal pixel radius (not auto-scaled); tune via <code>bubble-scale</code> or directly in the data.</li></ul><p><strong>Theming:</strong> --lwt-chart-bg, --lwt-chart-grid, --lwt-chart-border, --lwt-chart-tick-color, --lwt-chart-title-color, --lwt-chart-legend-color, --lwt-chart-aspect-ratio.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_doughnut-chart" width="15px" height="15px"></lwtg-icon> Doughnut Chart</summary>
+                <p>Same data shape, colors, and legend as Pie Chart below, with an <code>inner-radius</code> attribute cutting a hole out of the middle. Implemented self-contained (not a subclass of the pie chart) so load order between element files never matters.</p>
+                <h4>Implementation</h4>
+                <pre><code>var chart = document.querySelector('lwtd-doughnut-chart');
+chart.data = {
+  labels: ['Online', 'In-Store', 'Wholesale'],
+  datasets: [{ data: [163, 218, 135] }]
+};</code></pre>
+                
+                <lwtd-doughnut-chart id="demo-lwtd-doughnut-chart" title="Sales Channel" inner-radius="65" style="max-width:480px;"></lwtd-doughnut-chart>
+<script>
+  document.getElementById('demo-lwtd-doughnut-chart').data = { labels: ['Online', 'In-Store', 'Wholesale'], datasets: [{ data: [163, 218, 135] }] };
+</script>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>title</code> &mdash; chart title text.</li><li><code>legend-position</code> &mdash; "right" (default) | "top" | "bottom" | "left" | "none".</li><li><code>inner-radius</code> &mdash; 0&ndash;100, percentage of the outer radius the hole occupies (default 60). 0 behaves like a pie chart.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>data</code> &mdash; set only &mdash; { labels: [...], datasets: [{ data, backgroundColor?: string|array, borderColor?: string|array }] }. Only the first dataset is used.</li></ul><p><strong>Theming:</strong> --lwt-chart-bg, --lwt-chart-border, --lwt-chart-title-color, --lwt-chart-legend-color, --lwt-chart-empty, --lwt-chart-aspect-ratio.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_gauge" width="15px" height="15px"></lwtg-icon> Gauge</summary>
+                <p>A circular gauge/meter: one value against a min-max range drawn as a partial-circle progress arc (the speedometer silhouette) rather than a needle-and-dial. Simple values are plain attributes; threshold zones go through the <code>.data</code> property.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtd-gauge title="CPU Load" value="72" min="0" max="100" unit="%" label="current"&gt;&lt;/lwtd-gauge&gt;
+
+&lt;script&gt;
+  // Optional: threshold zones (the colored bands on a speedometer)
+  document.querySelector('lwtd-gauge').data = {
+    zones: [
+      { from: 0, to: 50, color: '#22c55e' },
+      { from: 50, to: 80, color: '#f59e0b' },
+      { from: 80, to: 100, color: '#ef4444' }
+    ]
+  };
+&lt;/script&gt;</code></pre>
+                
+                <lwtd-gauge id="demo-gauge" title="CPU Load" value="72" min="0" max="100" unit="%" label="current" style="max-width:260px;"></lwtd-gauge>
+<script>
+  document.getElementById('demo-gauge').data = { zones: [ { from: 0, to: 50, color: '#22c55e' }, { from: 50, to: 80, color: '#f59e0b' }, { from: 80, to: 100, color: '#ef4444' } ] };
+</script>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>title</code> &mdash; small title above the gauge.</li><li><code>value</code> &mdash; current value (also the displayed number, shown verbatim with unit appended &mdash; no number formatting).</li><li><code>min, max</code> &mdash; range (defaults 0, 100).</li><li><code>label</code> &mdash; small caption under the value, inside the ring.</li><li><code>unit</code> &mdash; suffix appended to the displayed value, e.g. "%".</li><li><code>color</code> &mdash; explicit arc color; overrides zone matching entirely.</li><li><code>thickness</code> &mdash; ring stroke width in px (default 24).</li><li><code>sweep</code> &mdash; degrees of arc the gauge spans, gap centered at the bottom (default 270; 180 gives a half-donut).</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>data</code> &mdash; set only, optional &mdash; { zones: [{ from, to, color }] }. Without zones the track is plain grey and the progress arc uses <code>color</code> (or built-in blue). With zones, a small indicator marks the current value on the colored bands instead.</li></ul><p><strong>Theming:</strong> --lwt-gauge-bg, --lwt-gauge-track-color, --lwt-gauge-color, --lwt-gauge-value-color, --lwt-gauge-label-color, --lwt-gauge-tick-color, --lwt-gauge-aspect-ratio.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_line-chart" width="15px" height="15px"></lwtg-icon> Line Chart</summary>
+                <p>Same conventions as Bar Chart with line/area-specific extras: per-dataset area fill, and chart-wide or per-dataset line width and point size. Points plot edge-to-edge (not centered in bands, unlike bars).</p>
+                <h4>Implementation</h4>
+                <pre><code>var chart = document.querySelector('lwtd-line-chart');
+chart.data = {
+  labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+  datasets: [
+    { label: 'Visitors', data: [4200, 4800, 5100, 4900, 5500, 6200] }
+  ]
+};
+// multi-series + area fill: chart.setAttribute('fill', '');</code></pre>
+                
+                <lwtd-line-chart id="demo-lwtd-line-chart" title="Monthly Visitors" x-label="Month" y-label="Visitors" style="max-width:480px;"></lwtd-line-chart>
+<script>
+  document.getElementById('demo-lwtd-line-chart').data = {
+    labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+    datasets: [
+      { label: 'Visitors', data: [4200, 4800, 5100, 4900, 5500, 6200] }
+    ]
+  };
+</script>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>title</code> &mdash; chart title text.</li><li><code>stacked</code> &mdash; boolean; stacks areas instead of overlapping them.</li><li><code>fill</code> &mdash; boolean; chart-wide default fill mode for datasets that don&apos;t set their own.</li><li><code>line-width</code> &mdash; default stroke width in px (default 2).</li><li><code>point-radius</code> &mdash; default dot radius in px, 0 hides dots (default 3).</li><li><code>legend-position</code> &mdash; "top" (default) | "bottom" | "left" | "right" | "none".</li><li><code>grid</code> &mdash; "horizontal" (default) | "vertical" | "both" | "none".</li><li><code>x-label / y-label</code> &mdash; axis titles.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>data</code> &mdash; set only &mdash; { labels, datasets: [{ label, data, borderColor?, backgroundColor?, fill?, borderWidth?, pointRadius? }] }. Per-dataset fields override the chart-wide attributes above.</li></ul><p><strong>Theming:</strong> --lwt-chart-bg, --lwt-chart-grid, --lwt-chart-border, --lwt-chart-tick-color, --lwt-chart-title-color, --lwt-chart-legend-color, --lwt-chart-aspect-ratio.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_pie-chart" width="15px" height="15px"></lwtg-icon> Pie Chart</summary>
+                <p>A pie chart rendered as inline SVG, same conventions as Bar Chart. Shows one series sliced by label &mdash; for grouped/stacked multi-series data use Bar Chart instead.</p>
+                <h4>Implementation</h4>
+                <pre><code>var chart = document.querySelector('lwtd-pie-chart');
+chart.data = {
+  labels: ['Online', 'In-Store', 'Wholesale'],
+  datasets: [{ data: [163, 218, 135], backgroundColor: ['#93c5fd', '#f9a8d4', '#86efac'] }]
+};</code></pre>
+                
+                <lwtd-pie-chart id="demo-lwtd-pie-chart" title="Sales Channel" style="max-width:480px;"></lwtd-pie-chart>
+<script>
+  document.getElementById('demo-lwtd-pie-chart').data = { labels: ['Online', 'In-Store', 'Wholesale'], datasets: [{ data: [163, 218, 135], backgroundColor: ['#93c5fd', '#f9a8d4', '#86efac'] }] };
+</script>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>title</code> &mdash; chart title text.</li><li><code>legend-position</code> &mdash; "right" (default) | "top" | "bottom" | "left" | "none".</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>data</code> &mdash; set only &mdash; { labels: [...], datasets: [{ data, backgroundColor?: string|array, borderColor?: string|array }] }. Only the first dataset is used; colors cycle automatically when omitted.</li></ul><p><strong>Theming:</strong> --lwt-chart-bg, --lwt-chart-border, --lwt-chart-title-color, --lwt-chart-legend-color, --lwt-chart-empty, --lwt-chart-aspect-ratio.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_radar-chart" width="15px" height="15px"></lwtg-icon> Radar Chart</summary>
+                <p>Labels become axes (spokes) arranged evenly around a circle; each dataset is one value per axis, drawn as a closed, filled polygon &mdash; e.g. comparing skill ratings across people.</p>
+                <h4>Implementation</h4>
+                <pre><code>var chart = document.querySelector('lwtd-radar-chart');
+chart.data = {
+  labels: ['Communication', 'Technical', 'Leadership', 'Creativity', 'Teamwork', 'Problem Solving'],
+  datasets: [
+    { label: 'Alice', data: [85, 82, 70, 90, 88, 65] },
+    { label: 'Bob',   data: [78, 65, 80, 60, 72, 85] }
+  ]
+};</code></pre>
+                
+                <lwtd-radar-chart id="demo-lwtd-radar-chart" title="Skills Assessment" style="max-width:480px;"></lwtd-radar-chart>
+<script>
+  document.getElementById('demo-lwtd-radar-chart').data = {
+    labels: ['Communication', 'Technical', 'Leadership', 'Creativity', 'Teamwork', 'Problem Solving'],
+    datasets: [
+      { label: 'Alice', data: [85, 82, 70, 90, 88, 65] },
+      { label: 'Bob',   data: [78, 65, 80, 60, 72, 85] }
+    ]
+  };
+</script>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>title</code> &mdash; chart title text.</li><li><code>legend-position</code> &mdash; "top" (default) | "bottom" | "left" | "right" | "none".</li><li><code>grid</code> &mdash; "both" (default) | "none" &mdash; rings are polygons matching the axis count, not axis-aligned lines.</li><li><code>line-width</code> &mdash; default stroke width in px (default 2).</li><li><code>point-radius</code> &mdash; default dot radius in px, 0 hides dots (default 3).</li><li><code>fill-opacity</code> &mdash; default fill alpha, 0&ndash;1 (default 0.25).</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>data</code> &mdash; set only &mdash; { labels: [...axis names...], datasets: [{ label, data, borderColor?, backgroundColor?, pointRadius?, borderWidth?, fillOpacity? }] }. The radial scale auto-ranges to a "nice" min/max around the actual data (no begin-at-zero option) &mdash; needs at least 3 labels to look like a proper polygon.</li></ul><p><strong>Theming:</strong> --lwt-chart-bg, --lwt-chart-grid, --lwt-chart-tick-color, --lwt-chart-title-color, --lwt-chart-legend-color, --lwt-chart-aspect-ratio.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_sparkline" width="15px" height="15px"></lwtg-icon> Sparkline</summary>
+                <p>A minimal inline trend line &mdash; no axes, grid, legend, or title, meant to sit inline in text or inside a small dashboard card (commonly paired with Stat Card below). Unlike the other charts, data is a plain <code>data</code> attribute, not a JS property.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtd-sparkline
+    label="Weekly sales performance showing growth"
+    data="10 25 15 40 30 45 35" trend
+    style="height: 2rem; width: 160px;"&gt;&lt;/lwtd-sparkline&gt;</code></pre>
+                
+                <lwtd-sparkline
+    label="Weekly sales performance showing growth"
+    data="10 25 15 40 30 45 35" trend
+    style="height: 2rem; width: 160px;"></lwtd-sparkline>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>data</code> &mdash; required; space/comma separated numbers. A normal observed attribute &mdash; setAttribute('data', ...) live-updates it.</li><li><code>label</code> &mdash; accessible label (aria-label on the SVG; not rendered as visible text).</li><li><code>color</code> &mdash; CSS color, overrides everything including trend.</li><li><code>trend</code> &mdash; boolean; auto-color green/red/grey by first-to-last value change (&gt;5% rise/fall, else neutral).</li><li><code>no-fill</code> &mdash; boolean; disables the area fill under the line (on by default).</li><li><code>line-width</code> &mdash; stroke width in viewBox units (default 2).</li></ul><p><strong>Theming:</strong> --lwt-sparkline-width (120px), --lwt-sparkline-height (32px), --lwt-sparkline-color, --lwt-sparkline-up-color, --lwt-sparkline-down-color, --lwt-sparkline-flat-color.</p>
+            </details>
+
+            <details>
+                <summary><lwtg-icon icon="app_stat-card" width="15px" height="15px"></lwtg-icon> Stat Card</summary>
+                <p>A KPI/stat card: label, big value, an optional colored delta, an optional icon, and an optional trailing chart &mdash; meant to pair naturally with Sparkline for the classic "number + trend line" dashboard tile.</p>
+                <h4>Implementation</h4>
+                <pre><code>&lt;lwtd-stat-card label="Revenue" value="$48,200" delta="+12.4%"&gt;
+    &lt;span slot="icon"&gt;💰&lt;/span&gt;
+    &lt;lwtd-sparkline slot="chart" trend data="30 34 31 40 38 45 48"
+        style="width: 100%; height: 28px;"&gt;&lt;/lwtd-sparkline&gt;
+&lt;/lwtd-stat-card&gt;</code></pre>
+                
+                <lwtd-stat-card label="Revenue" value="$48,200" delta="+12.4%">
+    <span slot="icon">💰</span>
+    <lwtd-sparkline slot="chart" trend data="30 34 31 40 38 45 48"
+        style="width: 100%; height: 28px;"></lwtd-sparkline>
+</lwtd-stat-card>
+                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>label</code> &mdash; small caption above the value.</li><li><code>value</code> &mdash; the big stat text &mdash; plain display string, no number formatting (write "$48,200" exactly as you want it shown).</li><li><code>delta</code> &mdash; change text, e.g. "+12.4%" (omit to hide the delta row).</li><li><code>trend</code> &mdash; "up" | "down" | "neutral" &mdash; overrides inference from delta&apos;s leading character (+/-).</li></ul><p><strong>Slots:</strong></p><ul><li><code>icon</code> &mdash; anything &mdash; an emoji, inline SVG, an &lt;img&gt;. Row disappears automatically when empty.</li><li><code>chart</code> &mdash; typically an &lt;lwtd-sparkline&gt;; size it directly on the sparkline itself via style, not via the card.</li></ul><p><strong>Theming:</strong> --lwt-stat-bg, --lwt-stat-border, --lwt-stat-label-color, --lwt-stat-value-color, --lwt-stat-icon-bg (shares --lwt-sparkline-up/-down/-flat-color with Sparkline).</p>
+            </details>
 
         </details>
     </section>
