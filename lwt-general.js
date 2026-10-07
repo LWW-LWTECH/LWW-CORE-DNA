@@ -24,16 +24,24 @@
 
       this.icon = this._root.host.getAttribute('icon');
       this.icon ? this.icon = this.icon.split('_') : '';
-      this.iconurl = this.iconhost + '/' + this.icon.join('/') + '.svg';
+      this.iconurl = '/' + this.icon.join('/') + '.svg';
       this.width = this._root.host.getAttribute('width') || '24px'; 
       this.height = this._root.host.getAttribute('height') || '24px'; 
       this._root.innerHTML = await this.getIconSVG();
-      this._root.style.width = this.width;
-      this._root.style.height = this.height;
+      this.style.display = 'inline-block';
+      this.style.width = this.width;
+      this.style.height = this.height;
     }
 
-    getIconSVG() {
-      return this.iconurl ? fetch(this.iconurl).then(response => response.text()) : Promise.resolve('');
+    async getIconSVG() {
+      let geticon = '';
+      geticon = this.iconurl ? await fetch(this.iconhost + this.iconurl).then(response => response.text()) : Promise.resolve('');
+      if(geticon=='404: Not Found'){
+        geticon = this.iconurl ? await fetch('/icons' + this.iconurl).then(response => response.text()) : Promise.resolve('');
+        return geticon;
+      }else{
+        return geticon;
+      }
     }
 
   }
