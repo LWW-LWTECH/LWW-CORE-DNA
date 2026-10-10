@@ -343,6 +343,10 @@
     '.slider-row label { font-size: 0.72rem; opacity: 0.65; }' +
     '.slider { position: relative; height: 12px; border-radius: 999px; border: 1px solid var(--lwt-picker-track-border, var(--lwt-color-border, rgba(0,0,0,0.15)));' +
     '  touch-action: none; cursor: pointer; overflow: hidden; }' +
+    // Hue track: full-saturation rainbow, evenly spaced so position x maps
+    // to hue x*360 -- the same stops as the hue wheel's conic-gradient.
+    '.slider[data-channel="h"] { background: var(--lwt-picker-hue-gradient, linear-gradient(to right,' +
+    '  hsl(0,100%,50%), hsl(60,100%,50%), hsl(120,100%,50%), hsl(180,100%,50%), hsl(240,100%,50%), hsl(300,100%,50%), hsl(360,100%,50%))); }' +
     '.alpha-checkerboard { position: absolute; inset: 0; ' + CHECKERBOARD + ' background-size: 8px 8px; background-position: 0 0, 0 4px, 4px -4px, -4px 0px; }' +
     '.alpha-gradient { position: absolute; inset: 0; }' +
     '.slider-handle { position: absolute; top: 50%; left: 0; width: 14px; height: 14px; margin-left: -7px; margin-top: -7px; border-radius: 50%;' +
