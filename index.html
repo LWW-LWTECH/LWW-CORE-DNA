@@ -110,15 +110,23 @@
 
     <section>
         <details open class="accordion-section">
-            <summary><span></span>Web-Core DNA</summary>
+            <summary><lwtg-icon icon="cdna_lwtlogo" width="15px" height="15px"></lwtg-icon> Web-Core DNA</summary>
 
+            <h4>Overview</h4>
+            <p>The Web-Core DNA library is designed to provide a robust foundation for building modern web applications, offering a suite of reusable components and utilities.</p>
+            <p>Developed by Lee W Winter as part of the LWW-LWTECH initiative to support buisness app development.</p>
+            <p>The library is provided with an open-source MIT License, allowing developers to freely use and integrate it into their projects. If there are any suggestions or needs for additonal elements please contact the developer.</p>
 
+            <p>The element prefix "lwtg-", "lwtf-", "lwtd-" stand for Lee Winter Tech and the last letter is the library g = general, d = dashboard, f = forms.</p>
             <h4>Implementation</h4>
-            <p>The Web-Core DNA library provides developers with the core functionalities and utilities required to build modern web applications efficiently.</p>
+            <p>
+                All libraries need the core library "lwt-core.js" to be loaded first. Make sure to include it before any other library scripts in your HTML document.<br/>
+                The lwt-core.css is optional since layout css is included inline when you call the element, but recommended for consistent styling across components colors and other css variables.
+            </p>
             <pre><code>&lt;head&gt;
-    &lt;script src="/lwt-core.js" type="text/javascript"&gt;&lt;/script&gt;
-    &lt;script src="/lwt-general.js" type="text/javascript"&gt;&lt;/script&gt;
-    &lt;link rel="stylesheet" href="/lwt-core.css"&gt;
+    &lt;script src="https://cdn.jsdelivr.net/gh/LWW-LWTECH/LWW-CORE-DNA@refs/heads/main/lwt-core.js" type="text/javascript"&gt;&lt;/script&gt;
+    &lt;script src="https://cdn.jsdelivr.net/gh/LWW-LWTECH/LWW-CORE-DNA@refs/heads/main/lwt-general.js" type="text/javascript"&gt;&lt;/script&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/LWW-LWTECH/LWW-CORE-DNA@refs/heads/main/lwt-core.css"&gt;
 &lt;/head&gt;
 </code></pre>
         </details>
