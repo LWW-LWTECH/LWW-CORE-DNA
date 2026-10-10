@@ -56,6 +56,12 @@
     '.children { padding-left: var(--lwt-tree-indent, 1.25rem); margin-left: 0.55rem; border-left: 1px solid var(--lwt-tree-guide-color, var(--lwt-color-border, #e5e7eb)); }' +
     '.children[hidden] { display: none; }';
 
+  // Uppercase tag names for .tagName comparisons. Keep in sync with the
+  // LWT.define() calls — these were left as 'LWT-TREE*' after the rename
+  // to lwtg-*, which made every item look like a leaf.
+  var ITEM_TAG = 'LWTG-TREE-ITEM';
+  var TREE_TAG = 'LWTG-TREE';
+
   var CHEVRON_SVG =
     '<svg viewBox="0 0 20 20"><path d="M7 4l6 6l-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
 
@@ -74,6 +80,8 @@
       this._handleRowClick = this._handleRowClick.bind(this);
       this._handleKeydown = this._handleKeydown.bind(this);
       this._handleCheckboxChange = this._handleCheckboxChange.bind(this);
+      this._renderedAsBranch = false;
+      this._childObserver = null;
     }
 
     connectedCallback() {
@@ -81,8 +89,11 @@
 
       if (!this._initialized) {
         this._initialized = true;
-        var hasChildren = !this.isLeaf;
-        this._expanded = hasChildren && this.hasAttribute('expanded');
+        // When scripts load in <head>, the parser upgrades this element
+        // as soon as its start tag is seen — before its children exist —
+        // so isLeaf is not trustworthy here. Store the requested state and
+        // let render()/_syncVisualState() decide based on real children.
+        this._expanded = this.hasAttribute('expanded');
         this._selected = this.hasAttribute('selected');
         this._applyChecked(this.hasAttribute('checked'), false);
         this._syncVisualState();
@@ -90,12 +101,24 @@
 
       this.addEventListener('click', this._handleRowClick);
       this.addEventListener('keydown', this._handleKeydown);
+
+      // Re-render when child items arrive later (streaming parse) or are
+      // added/removed directly via the DOM, so the chevron + children
+      // container match reality.
+      if (!this._childObserver) {
+        var self = this;
+        this._childObserver = new MutationObserver(function () {
+          if (self._renderedAsBranch !== !self.isLeaf) self.render();
+        });
+      }
+      this._childObserver.observe(this, { childList: true });
     }
 
     disconnectedCallback() {
       super.disconnectedCallback();
       this.removeEventListener('click', this._handleRowClick);
       this.removeEventListener('keydown', this._handleKeydown);
+      if (this._childObserver) this._childObserver.disconnect();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -106,6 +129,7 @@
     render() {
       var checkable = this._boolAttr('checkable');
       var hasChildren = !this.isLeaf;
+      this._renderedAsBranch = hasChildren;
       var fallbackLabel = escapeXml(this._strAttr('label', ''));
 
       var html =
@@ -153,7 +177,7 @@
     }
 
     get isLeaf() {
-      return !Array.prototype.some.call(this.children, function (c) { return c.tagName === 'LWT-TREE-ITEM'; });
+      return !Array.prototype.some.call(this.children, function (c) { return c.tagName === ITEM_TAG; });
     }
 
     get isExpanded() {
@@ -229,13 +253,13 @@
 
     _findTree() {
       var p = this.parentElement;
-      while (p && p.tagName !== 'LWT-TREE') p = p.parentElement;
+      while (p && p.tagName !== TREE_TAG) p = p.parentElement;
       return p;
     }
 
     _parentItem() {
       var p = this.parentElement;
-      return (p && p.tagName === 'LWT-TREE-ITEM') ? p : null;
+      return (p && p.tagName === ITEM_TAG) ? p : null;
     }
 
     _depth() {
@@ -272,7 +296,7 @@
     _cascadeUp() {
       var parent = this._parentItem();
       if (!parent) return;
-      var siblings = Array.prototype.filter.call(parent.children, function (c) { return c.tagName === 'LWT-TREE-ITEM'; });
+      var siblings = Array.prototype.filter.call(parent.children, function (c) { return c.tagName === ITEM_TAG; });
       var allChecked = siblings.every(function (c) { return c._checked && !c._indeterminate; });
       var noneChecked = siblings.every(function (c) { return !c._checked && !c._indeterminate; });
       if (allChecked) parent._applyChecked(true, false);
@@ -287,7 +311,7 @@
     // state comes out consistent even if a branch's attribute disagrees
     // with what its children actually say.
     _recomputeSelf() {
-      var childItems = Array.prototype.filter.call(this.children, function (c) { return c.tagName === 'LWT-TREE-ITEM'; });
+      var childItems = Array.prototype.filter.call(this.children, function (c) { return c.tagName === ITEM_TAG; });
       if (!childItems.length) {
         this._applyChecked(this.hasAttribute('checked'), false);
         return;

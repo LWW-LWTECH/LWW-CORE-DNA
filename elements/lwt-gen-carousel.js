@@ -50,11 +50,27 @@
           self._setupObserver();
         });
       }
+
+      // With scripts in <head>, cards are parsed *after* this element
+      // connects, so the one-shot build above can see zero cards. Rebuild
+      // dots and re-observe cards whenever the child list changes.
+      if (typeof MutationObserver === 'function') {
+        if (!this._childObserver) {
+          var carousel = this;
+          this._childObserver = new MutationObserver(function () {
+            carousel._syncImagePosition();
+            carousel._buildDots();
+            carousel._setupObserver();
+          });
+        }
+        this._childObserver.observe(this, { childList: true });
+      }
     }
 
     disconnectedCallback() {
       super.disconnectedCallback();
       if (this._observer) this._observer.disconnect();
+      if (this._childObserver) this._childObserver.disconnect();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -74,7 +90,7 @@
     }
 
     _cards() {
-      return Array.prototype.filter.call(this.children, function (c) { return c.tagName === 'LWT-CARD'; });
+      return Array.prototype.filter.call(this.children, function (c) { return c.tagName === 'LWTG-CARD'; });
     }
 
     _syncImagePosition() {
@@ -121,6 +137,7 @@
 
     _setupObserver() {
       if (typeof IntersectionObserver !== 'function' || !this._trackEl) return;
+      if (this._observer) this._observer.disconnect();
       var self = this;
       this._observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {

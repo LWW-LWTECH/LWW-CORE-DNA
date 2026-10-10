@@ -284,6 +284,9 @@
       this._onTagsClick = this._onTagsClick.bind(this);
       this._onDocClick = this._onDocClick.bind(this);
       this._onLightDomMutated = this._onLightDomMutated.bind(this);
+      this._onDocumentParsed = this._onDocumentParsed.bind(this);
+      this._waitingForParse = false;
+      this._jsDriven = false;
     }
 
     connectedCallback() {
@@ -292,9 +295,18 @@
       if (!this._initialized) {
         this._initialized = true;
         this._trySyncFromLightDom();
-        if (!this._lightDomSynced && typeof MutationObserver === 'function') {
+        // The parser can hand us our option children in several batches
+        // (it pauses mid-page on large or streamed documents), so while the
+        // document is still loading keep re-reading on every batch and only
+        // stop once parsing is done. Outside of page load, keep the old
+        // behaviour: wait for the first children to show up, read once.
+        this._waitingForParse = document.readyState === 'loading';
+        if ((this._waitingForParse || !this._lightDomSynced) && typeof MutationObserver === 'function') {
           this._mo = new MutationObserver(this._onLightDomMutated);
-          this._mo.observe(this, { childList: true });
+          this._mo.observe(this, { childList: true, subtree: true });
+        }
+        if (this._waitingForParse) {
+          document.addEventListener('DOMContentLoaded', this._onDocumentParsed, { once: true });
         }
       }
 
@@ -440,7 +452,17 @@
     }
 
     _onLightDomMutated() {
+      if (this._jsDriven) return;
       this._trySyncFromLightDom();
+      if (!this._waitingForParse && this._lightDomSynced && this._mo) {
+        this._mo.disconnect();
+        this._mo = null;
+      }
+    }
+
+    _onDocumentParsed() {
+      this._waitingForParse = false;
+      if (!this._jsDriven) this._trySyncFromLightDom();
       if (this._lightDomSynced && this._mo) {
         this._mo.disconnect();
         this._mo = null;
@@ -486,6 +508,8 @@
 
     set options(arr) {
       this._lightDomSynced = true;
+      this._jsDriven = true; // JS owns the options now -- ignore late light-DOM batches
+      this._waitingForParse = false;
       if (this._mo) { this._mo.disconnect(); this._mo = null; }
 
       var multiple = this._boolAttr('multiple');

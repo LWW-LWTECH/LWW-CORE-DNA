@@ -117,7 +117,7 @@
     disconnectedCallback() {
       super.disconnectedCallback();
       this.removeEventListener('lwt-navopen', this._handleChildOpen);
-      this.removeEventListener('lwtf-select', this._handleSelect);
+      this.removeEventListener('lwt-select', this._handleSelect);
       this.removeEventListener('keydown', this._handleKeydown);
       document.removeEventListener('mousedown', this._handleDocMousedown);
       if (this._resizeObserver) this._resizeObserver.disconnect();
@@ -156,7 +156,7 @@
 
     _directItemChildren() {
       return Array.prototype.filter.call(this.children, function (c) {
-        return c.tagName === 'LWT-NAV-ITEM';
+        return c.tagName === 'LWTG-NAV-ITEM';
       });
     }
 
@@ -229,7 +229,10 @@
       });
     }
 
-    _handleSelect() {
+    _handleSelect(event) {
+      // lwt-select is also emitted by form controls (lwtf-select, lwtf-input
+      // comboboxes) and tabs that may live inside a menu -- ignore those.
+      if (!event || !event.target || event.target.tagName !== 'LWTG-NAV-ITEM') return;
       // A leaf item was picked -- if we're showing the mobile off-canvas
       // panel, collapse it (common expectation: picking a link closes
       // the mobile nav rather than leaving it open behind the new page).

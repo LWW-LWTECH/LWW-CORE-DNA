@@ -122,7 +122,9 @@
     return t >= stripTime(lo).getTime() && t <= stripTime(hi).getTime();
   }
 
-  function addDays(date, n) { return new Date(date.getTime() + n * DAY_MS); }
+  // Calendar-day arithmetic (not n * 24h) so daylight-saving changes
+  // can't shift the result onto the wrong date.
+  function addDays(date, n) { return makeDate(date.getFullYear(), date.getMonth(), date.getDate() + n); }
   function addMonths(y, m, n) {
     var d = new Date(y, m + n, 1);
     return { y: d.getFullYear(), m: d.getMonth() };
@@ -359,6 +361,7 @@
         }
         this._syncTrigger();
         this._reportValue();
+        this._reportValidity();
       }
 
       document.addEventListener('mousedown', this._onDocClick);
@@ -442,6 +445,7 @@
       if (disabled || readonly) this._close();
 
       this._syncTrigger();
+      this._reportValidity();
     }
 
     _syncTrigger() {

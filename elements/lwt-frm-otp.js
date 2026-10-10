@@ -160,6 +160,7 @@
         this._lastCommitted = this.value;
         this._wasComplete = this._isComplete();
         this._reportValue();
+        this._reportValidity();
         if (this._boolAttr('auto-focus')) this.focus();
       }
     }
@@ -274,6 +275,7 @@
         box.tabIndex = disabled ? -1 : 0;
       });
       this._autofillInput.disabled = disabled;
+      this._reportValidity();
     }
 
     // ---- typing ----

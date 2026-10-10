@@ -79,6 +79,31 @@
                 font-size: 0.95em;
             }
         }
+        /* Live ".value" readout under each form demo (see script at end of page) */
+        .value-readout{
+            margin: 0.5em 0 1.2em;
+            border: 1px dashed #cbd5e1;
+            border-radius: 6px;
+            background: #f8fafc;
+            font-size: 12px;
+        }
+        .value-readout .vr-head{
+            display: flex;
+            justify-content: space-between;
+            gap: 1em;
+            padding: 0.35em 0.7em;
+            border-bottom: 1px dashed #cbd5e1;
+            color: #475569;
+        }
+        .value-readout .vr-event{ color: #94a3b8; }
+        .value-readout pre{
+            margin: 0;
+            padding: 0.5em 0.7em;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: Consolas, Menlo, monospace;
+            color: #0f172a;
+        }
     </style>
 </head>
 <body>
@@ -299,7 +324,7 @@
             </details>
 
             <details>
-                <summary><lwtg-icon icon="app_grid-item" width="15px" height="15px"></lwtg-icon> Grid Item &amp;mdash; media types</summary>
+                <summary><lwtg-icon icon="app_grid-item" width="15px" height="15px"></lwtg-icon> Grid Item media types</summary>
                 <p>&lt;lwtg-grid-item&gt; (used above inside Image Grid) also resolves inline SVG and YouTube media automatically. This example shows a plain image, an inline/stylable SVG via the default slot, and an auto-detected YouTube video that swaps to a live, autoplaying iframe on click.</p>
                 <h4>Implementation</h4>
                 <pre><code>&lt;lwtg-image-grid columns="3" gap="12px" row-height="160px"&gt;
@@ -412,6 +437,9 @@
                 <summary><lwtg-icon icon="app_rive" width="15px" height="15px"></lwtg-icon> Rive Animation</summary>
                 <p>Wraps a <a href="https://rive.app" target="_blank" rel="noopener noreferrer">Rive</a> animation in a custom element, auto-loading the Rive web runtime from unpkg the first time it&apos;s needed. Size the host via CSS/width/height &mdash; Rive reads the canvas&apos;s rendered size to pick its drawing resolution.</p>
                 <h4>Implementation</h4>
+
+                <lwtg-rive src="https://static.rive.app/rivs/rives_animated_emojis.riv" state-machine="State Machine 1" autoplay style="width:320px;height:220px;"></lwtg-rive>
+
                 <pre><code>&lt;lwtg-rive src="./media/site_hero.riv" state-machine="hero" autoplay
     style="width:320px;height:220px;"&gt;&lt;/lwtg-rive&gt;</code></pre>
                 <p><em>Live demo omitted on this page &mdash; point <code>src</code> at your own .riv file to see it render.</em></p>
@@ -622,7 +650,7 @@
                 <h4>Implementation</h4>
                 <pre><code>&lt;lwtf-signature label="Sign here" fonts="Dancing Script;Pacifico;Satisfy;Caveat"&gt;&lt;/lwtf-signature&gt;</code></pre>
                 
-                <lwtf-signature label="Sign here" fonts="Dancing Script;Pacifico;Satisfy;Caveat"></lwtf-signature>
+                <lwtf-signature label="Sign here" fonts="arial;cursive;fantasy;monospace"></lwtf-signature>
                 <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>label, helper, error</code> &mdash; display / form basics.</li><li><code>name, required, disabled, readonly</code> &mdash; standard form states.</li><li><code>mode</code> &mdash; "type" (default) | "draw" &mdash; which panel is active on connect.</li><li><code>no-draw</code> &mdash; boolean; hides the Type/Draw tabs and removes draw mode entirely.</li><li><code>fonts</code> &mdash; semicolon-separated CSS font-family list offered in type mode. Load real script fonts yourself (e.g. a Google Fonts &lt;link&gt;) &mdash; this element only offers them, it doesn&apos;t fetch any.</li><li><code>pen-color</code> &mdash; stroke color for draw mode (default: currentColor, falls back to #111827).</li><li><code>value</code> &mdash; initial typed name; read once at connect, type mode only.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>value</code> &mdash; get/set; get returns { mode, text, font } (type) or { mode, dataUrl } (draw).</li><li><code>mode</code> &mdash; get/set "type" | "draw".</li></ul><p><strong>Methods:</strong></p><ul><li><code>toDataURL()</code> &mdash; PNG data URL of the current signature either way.</li><li><code>isEmpty()</code> &mdash; true if nothing is typed/drawn.</li><li><code>clear() / checkValidity() / reportValidity()</code> &mdash; standard helpers.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwtf-input</code> &mdash; every keystroke/stroke; detail: { value }.</li><li><code>lwt-change</code> &mdash; commit (blur, or pointerup after a stroke); detail: { value }.</li><li><code>lwt-mode-change</code> &mdash; the Type/Draw tab changed; detail: { mode }.</li></ul><p><strong>Form participation:</strong> uses ElementInternals; the submitted form value is always the rendered PNG via .toDataURL(). <code>required</code> is satisfied once .isEmpty() is false.</p>
             </details>
 
@@ -874,6 +902,63 @@ chart.data = {
                 }
             });
         });
+    </script>
+    <script>
+        // Live ".value" readout for every form demo on this page. Each
+        // readout shows exactly what `element.value` returns (it's a
+        // property, not a method) and refreshes on every lwt-* event.
+        (function () {
+            var FORM_TAGS = ['lwtf-choices', 'lwtf-color-picker', 'lwtf-date-range', 'lwtf-input',
+                             'lwtf-otp', 'lwtf-select', 'lwtf-signature', 'lwtf-slider', 'lwtf-transfer-list'];
+            var EVENTS = ['lwt-input', 'lwt-change', 'lwt-select', 'lwt-remove', 'lwt-clear',
+                          'lwt-complete', 'lwt-preset', 'lwt-mode-change'];
+
+            // Long data URLs (lwtf-signature) would flood the panel -- shorten them.
+            function shorten(key, val) {
+                if (typeof val === 'string' && val.indexOf('data:') === 0 && val.length > 80) {
+                    return val.slice(0, 60) + '... (' + val.length + ' chars)';
+                }
+                return val;
+            }
+
+            function format(value) {
+                if (value === undefined) return 'undefined';
+                if (typeof value === 'string') return JSON.stringify(shorten('', value));
+                return JSON.stringify(value, shorten, 2);
+            }
+
+            function attach(el) {
+                var tag = el.localName;
+                var readout = document.createElement('div');
+                readout.className = 'value-readout';
+                readout.innerHTML =
+                    '<div class="vr-head"><span><code>' + tag + '.value</code></span>' +
+                    '<span class="vr-event">initial</span></div><pre></pre>';
+                el.insertAdjacentElement('afterend', readout);
+
+                var pre = readout.querySelector('pre');
+                var eventEl = readout.querySelector('.vr-event');
+
+                function update(eventName) {
+                    pre.textContent = format(el.value);
+                    if (eventName) eventEl.textContent = 'last event: ' + eventName;
+                }
+
+                EVENTS.forEach(function (name) {
+                    el.addEventListener(name, function () { update(name); });
+                });
+                // lwtf-select, lwtf-otp, lwtf-signature etc. finish their own
+                // setup a moment after connecting -- show the initial value then.
+                setTimeout(function () { update(); }, 0);
+            }
+
+            function init() {
+                document.querySelectorAll(FORM_TAGS.join(',')).forEach(attach);
+            }
+
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+            else init();
+        })();
     </script>
 </body>
 </html>

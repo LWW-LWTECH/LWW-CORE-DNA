@@ -86,7 +86,7 @@
 
       if (!this._initialized) {
         this._initialized = true;
-        this._topLevel = !!(this.parentElement && this.parentElement.tagName === 'LWT-NAV-MENU');
+        this._topLevel = !!(this.parentElement && this.parentElement.tagName === 'LWTG-NAV-MENU');
         if (this._topLevel) this.setAttribute('data-top-level', '');
         this.style.setProperty('--lwt-nav-item-depth', String(this._computeDepth()));
 
@@ -183,20 +183,20 @@
 
     _computeHasChildren() {
       return Array.prototype.some.call(this.children, function (c) {
-        return c.tagName === 'LWT-NAV-ITEM' && c.getAttribute('slot') !== 'label';
+        return c.tagName === 'LWTG-NAV-ITEM' && c.getAttribute('slot') !== 'label';
       });
     }
 
     _directChildItems() {
       return Array.prototype.filter.call(this.children, function (c) {
-        return c.tagName === 'LWT-NAV-ITEM' && c.getAttribute('slot') !== 'label';
+        return c.tagName === 'LWTG-NAV-ITEM' && c.getAttribute('slot') !== 'label';
       });
     }
 
     _computeDepth() {
       var depth = 0;
       var p = this.parentElement;
-      while (p && p.tagName === 'LWT-NAV-ITEM') {
+      while (p && p.tagName === 'LWTG-NAV-ITEM') {
         depth++;
         p = p.parentElement;
       }
@@ -312,7 +312,7 @@
 
     _openAncestor() {
       var p = this.parentElement;
-      while (p && p.tagName === 'LWT-NAV-ITEM') {
+      while (p && p.tagName === 'LWTG-NAV-ITEM') {
         if (p.isOpen) return p;
         p = p.parentElement;
       }

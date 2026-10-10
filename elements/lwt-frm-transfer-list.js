@@ -194,6 +194,9 @@
       this._onSelDblClick = this._onSelDblClick.bind(this);
       this._onSelectChange = this._onSelectChange.bind(this);
       this._onLightDomMutated = this._onLightDomMutated.bind(this);
+      this._onDocumentParsed = this._onDocumentParsed.bind(this);
+      this._waitingForParse = false;
+      this._jsDriven = false;
     }
 
     connectedCallback() {
@@ -208,25 +211,34 @@
         this._initialized = true;
         this._trySyncFromLightDom();
 
-        // If nothing was found, the <lwtf-transfer-option> children may
-        // not have been parsed yet — this fires the instant the opening
-        // tag is inserted when the defining scripts already ran (e.g.
-        // loaded in <head>), which is BEFORE the browser gets to this
-        // element's own children. A MutationObserver doesn't depend on
-        // any timing assumption: it reports childList changes whenever
-        // they actually happen, including the parser inserting the rest
-        // of this element's markup a moment later. Once it reports
-        // something, we parse once and stop watching -- matching the
-        // documented "read once" behavior (see file header).
-        if (!this._lightDomSynced && typeof MutationObserver === 'function') {
+        // The parser can hand us our option children in several batches
+        // (it pauses mid-page on large or streamed documents), so while the
+        // document is still loading keep re-reading on every batch and only
+        // stop once parsing is done. Outside of page load, wait for the
+        // first children to show up and read once.
+        this._waitingForParse = document.readyState === 'loading';
+        if ((this._waitingForParse || !this._lightDomSynced) && typeof MutationObserver === 'function') {
           this._mo = new MutationObserver(this._onLightDomMutated);
-          this._mo.observe(this, { childList: true });
+          this._mo.observe(this, { childList: true, subtree: true });
+        }
+        if (this._waitingForParse) {
+          document.addEventListener('DOMContentLoaded', this._onDocumentParsed, { once: true });
         }
       }
     }
 
     _onLightDomMutated() {
+      if (this._jsDriven) return;
       this._trySyncFromLightDom();
+      if (!this._waitingForParse && this._lightDomSynced && this._mo) {
+        this._mo.disconnect();
+        this._mo = null;
+      }
+    }
+
+    _onDocumentParsed() {
+      this._waitingForParse = false;
+      if (!this._jsDriven) this._trySyncFromLightDom();
       if (this._lightDomSynced && this._mo) {
         this._mo.disconnect();
         this._mo = null;
@@ -499,6 +511,8 @@
       // JS is now driving state -- stop waiting on light-DOM children
       // that may still be about to arrive from a still-in-progress parse.
       this._lightDomSynced = true;
+      this._jsDriven = true; // JS owns the options now -- ignore late light-DOM batches
+      this._waitingForParse = false;
       if (this._mo) { this._mo.disconnect(); this._mo = null; }
 
       this._items = [];

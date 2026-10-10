@@ -34,6 +34,9 @@
   var CSS = ':host { display: block; font-family: inherit; }';
   var TEMPLATE = '<div class="tree" part="tree" role="tree"><slot></slot></div>';
 
+  // Uppercase tag name for .tagName comparisons — keep in sync with define().
+  var ITEM_TAG = 'LWTG-TREE-ITEM';
+
   var NAV_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
 
   class LWTTree extends window.LWT.Element {
@@ -47,6 +50,8 @@
       this._handleSelect = this._handleSelect.bind(this);
       this._handleCheckChange = this._handleCheckChange.bind(this);
       this._handleKeydown = this._handleKeydown.bind(this);
+      this._treeObserver = null;
+      this._syncQueued = false;
     }
 
     connectedCallback() {
@@ -66,6 +71,27 @@
           self._recomputeChecked();
         });
       }
+
+      // With scripts in <head>, items are parsed *after* this element
+      // connects, so the one-shot sync above can run against an empty
+      // tree. Watch for items being added anywhere below and re-sync
+      // checkable + derived check state once per batch.
+      if (!this._treeObserver) {
+        var tree = this;
+        this._treeObserver = new MutationObserver(function () { tree._queueSync(); });
+      }
+      this._treeObserver.observe(this, { childList: true, subtree: true });
+    }
+
+    _queueSync() {
+      if (this._syncQueued) return;
+      this._syncQueued = true;
+      var self = this;
+      Promise.resolve().then(function () {
+        self._syncQueued = false;
+        self._syncCheckable();
+        self._recomputeChecked();
+      });
     }
 
     disconnectedCallback() {
@@ -73,6 +99,7 @@
       this.removeEventListener('lwt-itemselect', this._handleSelect);
       this.removeEventListener('lwt-itemcheck', this._handleCheckChange);
       this.removeEventListener('keydown', this._handleKeydown);
+      if (this._treeObserver) this._treeObserver.disconnect();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -93,7 +120,7 @@
     }
 
     _recomputeChecked() {
-      var roots = Array.prototype.filter.call(this.children, function (c) { return c.tagName === 'LWT-TREE-ITEM'; });
+      var roots = Array.prototype.filter.call(this.children, function (c) { return c.tagName === ITEM_TAG; });
       roots.forEach(function (r) { r._recomputeSelf(); });
     }
 
@@ -128,7 +155,7 @@
 
     addItem(options, parentItem) {
       var item = createTreeItem(options, this);
-      if (parentItem && parentItem.tagName === 'LWT-TREE-ITEM') {
+      if (parentItem && parentItem.tagName === ITEM_TAG) {
         var wasLeaf = parentItem.isLeaf;
         parentItem.appendChild(item);
         if (wasLeaf) parentItem.render();
@@ -167,7 +194,7 @@
     _handleKeydown(event) {
       if (NAV_KEYS.indexOf(event.key) === -1) return;
       var current = event.target;
-      if (!current || current.tagName !== 'LWT-TREE-ITEM') return;
+      if (!current || current.tagName !== ITEM_TAG) return;
 
       var visible = this._visibleItems();
       var idx = visible.indexOf(current);

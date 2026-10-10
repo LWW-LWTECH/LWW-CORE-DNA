@@ -157,7 +157,7 @@
       var parent = this.parentElement;
       if (!parent) return -1;
       var siblings = Array.prototype.filter.call(parent.children, function (c) {
-        return c.tagName === 'LWT-GRID-ITEM';
+        return c.tagName === 'LWTG-GRID-ITEM';
       });
       return siblings.indexOf(this);
     }

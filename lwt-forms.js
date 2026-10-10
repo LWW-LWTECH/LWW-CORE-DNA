@@ -4,7 +4,7 @@
  * `node build-lwt-form.js` after adding or changing a lwt-frm-*.js
  * file instead; hand edits here will just get overwritten next build.
  *
- * Generated 2026-08-22T18:34:02.631Z from:
+ * Generated 2026-10-10T01:21:48.145Z from:
  *   lwt-frm-choice-option.js
  *   lwt-frm-choices.js
  *   lwt-frm-color-picker.js
@@ -1771,7 +1771,9 @@
     return t >= stripTime(lo).getTime() && t <= stripTime(hi).getTime();
   }
 
-  function addDays(date, n) { return new Date(date.getTime() + n * DAY_MS); }
+  // Calendar-day arithmetic (not n * 24h) so daylight-saving changes
+  // can't shift the result onto the wrong date.
+  function addDays(date, n) { return makeDate(date.getFullYear(), date.getMonth(), date.getDate() + n); }
   function addMonths(y, m, n) {
     var d = new Date(y, m + n, 1);
     return { y: d.getFullYear(), m: d.getMonth() };
@@ -2008,6 +2010,7 @@
         }
         this._syncTrigger();
         this._reportValue();
+        this._reportValidity();
       }
 
       document.addEventListener('mousedown', this._onDocClick);
@@ -2091,6 +2094,7 @@
       if (disabled || readonly) this._close();
 
       this._syncTrigger();
+      this._reportValidity();
     }
 
     _syncTrigger() {
@@ -3607,6 +3611,7 @@
         this._lastCommitted = this.value;
         this._wasComplete = this._isComplete();
         this._reportValue();
+        this._reportValidity();
         if (this._boolAttr('auto-focus')) this.focus();
       }
     }
@@ -3721,6 +3726,7 @@
         box.tabIndex = disabled ? -1 : 0;
       });
       this._autofillInput.disabled = disabled;
+      this._reportValidity();
     }
 
     // ---- typing ----
@@ -4211,6 +4217,9 @@
       this._onTagsClick = this._onTagsClick.bind(this);
       this._onDocClick = this._onDocClick.bind(this);
       this._onLightDomMutated = this._onLightDomMutated.bind(this);
+      this._onDocumentParsed = this._onDocumentParsed.bind(this);
+      this._waitingForParse = false;
+      this._jsDriven = false;
     }
 
     connectedCallback() {
@@ -4219,9 +4228,18 @@
       if (!this._initialized) {
         this._initialized = true;
         this._trySyncFromLightDom();
-        if (!this._lightDomSynced && typeof MutationObserver === 'function') {
+        // The parser can hand us our option children in several batches
+        // (it pauses mid-page on large or streamed documents), so while the
+        // document is still loading keep re-reading on every batch and only
+        // stop once parsing is done. Outside of page load, keep the old
+        // behaviour: wait for the first children to show up, read once.
+        this._waitingForParse = document.readyState === 'loading';
+        if ((this._waitingForParse || !this._lightDomSynced) && typeof MutationObserver === 'function') {
           this._mo = new MutationObserver(this._onLightDomMutated);
-          this._mo.observe(this, { childList: true });
+          this._mo.observe(this, { childList: true, subtree: true });
+        }
+        if (this._waitingForParse) {
+          document.addEventListener('DOMContentLoaded', this._onDocumentParsed, { once: true });
         }
       }
 
@@ -4367,7 +4385,17 @@
     }
 
     _onLightDomMutated() {
+      if (this._jsDriven) return;
       this._trySyncFromLightDom();
+      if (!this._waitingForParse && this._lightDomSynced && this._mo) {
+        this._mo.disconnect();
+        this._mo = null;
+      }
+    }
+
+    _onDocumentParsed() {
+      this._waitingForParse = false;
+      if (!this._jsDriven) this._trySyncFromLightDom();
       if (this._lightDomSynced && this._mo) {
         this._mo.disconnect();
         this._mo = null;
@@ -4413,6 +4441,8 @@
 
     set options(arr) {
       this._lightDomSynced = true;
+      this._jsDriven = true; // JS owns the options now -- ignore late light-DOM batches
+      this._waitingForParse = false;
       if (this._mo) { this._mo.disconnect(); this._mo = null; }
 
       var multiple = this._boolAttr('multiple');
@@ -5102,6 +5132,7 @@
         this._updatePreview();
         this._lastCommitted = this.value;
         this._reportValue();
+        this._reportValidity();
       }
       if (typeof ResizeObserver === 'function' && !this._resizeObserver) {
         this._resizeObserver = new ResizeObserver(this._onResize);
@@ -5340,6 +5371,7 @@
       this._tabType.disabled = disabled || readonly;
       this._tabDraw.disabled = disabled || readonly;
       this._clearBtn.disabled = disabled || readonly;
+      this._reportValidity();
     }
 
     // ---- clear / commit ----
@@ -6256,6 +6288,9 @@
       this._onSelDblClick = this._onSelDblClick.bind(this);
       this._onSelectChange = this._onSelectChange.bind(this);
       this._onLightDomMutated = this._onLightDomMutated.bind(this);
+      this._onDocumentParsed = this._onDocumentParsed.bind(this);
+      this._waitingForParse = false;
+      this._jsDriven = false;
     }
 
     connectedCallback() {
@@ -6270,25 +6305,34 @@
         this._initialized = true;
         this._trySyncFromLightDom();
 
-        // If nothing was found, the <lwtf-transfer-option> children may
-        // not have been parsed yet — this fires the instant the opening
-        // tag is inserted when the defining scripts already ran (e.g.
-        // loaded in <head>), which is BEFORE the browser gets to this
-        // element's own children. A MutationObserver doesn't depend on
-        // any timing assumption: it reports childList changes whenever
-        // they actually happen, including the parser inserting the rest
-        // of this element's markup a moment later. Once it reports
-        // something, we parse once and stop watching -- matching the
-        // documented "read once" behavior (see file header).
-        if (!this._lightDomSynced && typeof MutationObserver === 'function') {
+        // The parser can hand us our option children in several batches
+        // (it pauses mid-page on large or streamed documents), so while the
+        // document is still loading keep re-reading on every batch and only
+        // stop once parsing is done. Outside of page load, wait for the
+        // first children to show up and read once.
+        this._waitingForParse = document.readyState === 'loading';
+        if ((this._waitingForParse || !this._lightDomSynced) && typeof MutationObserver === 'function') {
           this._mo = new MutationObserver(this._onLightDomMutated);
-          this._mo.observe(this, { childList: true });
+          this._mo.observe(this, { childList: true, subtree: true });
+        }
+        if (this._waitingForParse) {
+          document.addEventListener('DOMContentLoaded', this._onDocumentParsed, { once: true });
         }
       }
     }
 
     _onLightDomMutated() {
+      if (this._jsDriven) return;
       this._trySyncFromLightDom();
+      if (!this._waitingForParse && this._lightDomSynced && this._mo) {
+        this._mo.disconnect();
+        this._mo = null;
+      }
+    }
+
+    _onDocumentParsed() {
+      this._waitingForParse = false;
+      if (!this._jsDriven) this._trySyncFromLightDom();
       if (this._lightDomSynced && this._mo) {
         this._mo.disconnect();
         this._mo = null;
@@ -6561,6 +6605,8 @@
       // JS is now driving state -- stop waiting on light-DOM children
       // that may still be about to arrive from a still-in-progress parse.
       this._lightDomSynced = true;
+      this._jsDriven = true; // JS owns the options now -- ignore late light-DOM batches
+      this._waitingForParse = false;
       if (this._mo) { this._mo.disconnect(); this._mo = null; }
 
       this._items = [];

@@ -69,11 +69,37 @@
         var initial = this._strAttr('active', '') || this._firstTabPanel();
         if (initial) this.selectTab(initial, { silent: true });
       }
+
+      // With scripts in <head>, tabs/panels are parsed *after* this element
+      // connects, so the initial selection above can find nothing. Re-sync
+      // whenever children are added/removed: pick an initial tab if none is
+      // active yet, and hide any newly-added panels that aren't active.
+      if (typeof MutationObserver === 'function') {
+        if (!this._childObserver) {
+          var tabs = this;
+          this._childObserver = new MutationObserver(function () { tabs._syncFromChildren(); });
+        }
+        this._childObserver.observe(this, { childList: true });
+      }
+    }
+
+    _syncFromChildren() {
+      this._syncTabPositions();
+      var active = this._activePanel;
+      var stillThere = active && this.querySelector(':scope > lwtg-tab[panel="' + (window.CSS && CSS.escape ? CSS.escape(active) : active) + '"]');
+      if (!stillThere) {
+        var initial = this._strAttr('active', '') || this._firstTabPanel();
+        if (initial) this.selectTab(initial, { silent: true });
+        else this._activePanel = null;
+      } else {
+        this.selectTab(active, { silent: true });
+      }
     }
 
     disconnectedCallback() {
       super.disconnectedCallback();
-      this.removeEventListener('lwtf-select', this._handleSelect);
+      this.removeEventListener('lwt-select', this._handleSelect);
+      if (this._childObserver) this._childObserver.disconnect();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -98,6 +124,11 @@
     }
 
     _handleSelect(event) {
+      // lwt-select bubbles up from any descendant (lwtf-select, lwtf-input
+      // comboboxes, nav items, a nested <lwtg-tabs>' own tabs) -- only
+      // react to this container's own direct <lwtg-tab> children.
+      var tab = event.target;
+      if (!tab || tab.tagName !== 'LWTG-TAB' || tab.parentElement !== this) return;
       this.selectTab(event.detail.panel);
     }
 
@@ -136,6 +167,7 @@
       this.appendChild(panel);
 
       if (options.active || !this._activePanel) this.selectTab(panelName);
+      else panel.hidden = true; // keep non-active new panels hidden right away
 
       return { tab: tab, panel: panel, panelName: panelName };
     }

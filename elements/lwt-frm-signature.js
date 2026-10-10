@@ -254,6 +254,7 @@
         this._updatePreview();
         this._lastCommitted = this.value;
         this._reportValue();
+        this._reportValidity();
       }
       if (typeof ResizeObserver === 'function' && !this._resizeObserver) {
         this._resizeObserver = new ResizeObserver(this._onResize);
@@ -492,6 +493,7 @@
       this._tabType.disabled = disabled || readonly;
       this._tabDraw.disabled = disabled || readonly;
       this._clearBtn.disabled = disabled || readonly;
+      this._reportValidity();
     }
 
     // ---- clear / commit ----

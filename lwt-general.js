@@ -4,7 +4,7 @@
  * `node build-lwt-general.js` after adding or changing a lwt-gen-*.js
  * file instead; hand edits here will just get overwritten next build.
  *
- * Generated 2026-10-10T00:30:02.872Z from:
+ * Generated 2026-10-10T01:14:38.870Z from:
  *   lwt-gen-accordion-item.js
  *   lwt-gen-accordion.js
  *   lwt-gen-alert.js
@@ -535,11 +535,27 @@
           self._setupObserver();
         });
       }
+
+      // With scripts in <head>, cards are parsed *after* this element
+      // connects, so the one-shot build above can see zero cards. Rebuild
+      // dots and re-observe cards whenever the child list changes.
+      if (typeof MutationObserver === 'function') {
+        if (!this._childObserver) {
+          var carousel = this;
+          this._childObserver = new MutationObserver(function () {
+            carousel._syncImagePosition();
+            carousel._buildDots();
+            carousel._setupObserver();
+          });
+        }
+        this._childObserver.observe(this, { childList: true });
+      }
     }
 
     disconnectedCallback() {
       super.disconnectedCallback();
       if (this._observer) this._observer.disconnect();
+      if (this._childObserver) this._childObserver.disconnect();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -559,7 +575,7 @@
     }
 
     _cards() {
-      return Array.prototype.filter.call(this.children, function (c) { return c.tagName === 'LWT-CARD'; });
+      return Array.prototype.filter.call(this.children, function (c) { return c.tagName === 'LWTG-CARD'; });
     }
 
     _syncImagePosition() {
@@ -606,6 +622,7 @@
 
     _setupObserver() {
       if (typeof IntersectionObserver !== 'function' || !this._trackEl) return;
+      if (this._observer) this._observer.disconnect();
       var self = this;
       this._observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
@@ -815,7 +832,7 @@
       var parent = this.parentElement;
       if (!parent) return -1;
       var siblings = Array.prototype.filter.call(parent.children, function (c) {
-        return c.tagName === 'LWT-GRID-ITEM';
+        return c.tagName === 'LWTG-GRID-ITEM';
       });
       return siblings.indexOf(this);
     }
@@ -1289,7 +1306,7 @@
 
       if (!this._initialized) {
         this._initialized = true;
-        this._topLevel = !!(this.parentElement && this.parentElement.tagName === 'LWT-NAV-MENU');
+        this._topLevel = !!(this.parentElement && this.parentElement.tagName === 'LWTG-NAV-MENU');
         if (this._topLevel) this.setAttribute('data-top-level', '');
         this.style.setProperty('--lwt-nav-item-depth', String(this._computeDepth()));
 
@@ -1386,20 +1403,20 @@
 
     _computeHasChildren() {
       return Array.prototype.some.call(this.children, function (c) {
-        return c.tagName === 'LWT-NAV-ITEM' && c.getAttribute('slot') !== 'label';
+        return c.tagName === 'LWTG-NAV-ITEM' && c.getAttribute('slot') !== 'label';
       });
     }
 
     _directChildItems() {
       return Array.prototype.filter.call(this.children, function (c) {
-        return c.tagName === 'LWT-NAV-ITEM' && c.getAttribute('slot') !== 'label';
+        return c.tagName === 'LWTG-NAV-ITEM' && c.getAttribute('slot') !== 'label';
       });
     }
 
     _computeDepth() {
       var depth = 0;
       var p = this.parentElement;
-      while (p && p.tagName === 'LWT-NAV-ITEM') {
+      while (p && p.tagName === 'LWTG-NAV-ITEM') {
         depth++;
         p = p.parentElement;
       }
@@ -1515,7 +1532,7 @@
 
     _openAncestor() {
       var p = this.parentElement;
-      while (p && p.tagName === 'LWT-NAV-ITEM') {
+      while (p && p.tagName === 'LWTG-NAV-ITEM') {
         if (p.isOpen) return p;
         p = p.parentElement;
       }
@@ -1676,7 +1693,7 @@
     disconnectedCallback() {
       super.disconnectedCallback();
       this.removeEventListener('lwt-navopen', this._handleChildOpen);
-      this.removeEventListener('lwtf-select', this._handleSelect);
+      this.removeEventListener('lwt-select', this._handleSelect);
       this.removeEventListener('keydown', this._handleKeydown);
       document.removeEventListener('mousedown', this._handleDocMousedown);
       if (this._resizeObserver) this._resizeObserver.disconnect();
@@ -1715,7 +1732,7 @@
 
     _directItemChildren() {
       return Array.prototype.filter.call(this.children, function (c) {
-        return c.tagName === 'LWT-NAV-ITEM';
+        return c.tagName === 'LWTG-NAV-ITEM';
       });
     }
 
@@ -1788,7 +1805,10 @@
       });
     }
 
-    _handleSelect() {
+    _handleSelect(event) {
+      // lwt-select is also emitted by form controls (lwtf-select, lwtf-input
+      // comboboxes) and tabs that may live inside a menu -- ignore those.
+      if (!event || !event.target || event.target.tagName !== 'LWTG-NAV-ITEM') return;
       // A leaf item was picked -- if we're showing the mobile off-canvas
       // panel, collapse it (common expectation: picking a link closes
       // the mobile nav rather than leaving it open behind the new page).
@@ -2964,11 +2984,37 @@
         var initial = this._strAttr('active', '') || this._firstTabPanel();
         if (initial) this.selectTab(initial, { silent: true });
       }
+
+      // With scripts in <head>, tabs/panels are parsed *after* this element
+      // connects, so the initial selection above can find nothing. Re-sync
+      // whenever children are added/removed: pick an initial tab if none is
+      // active yet, and hide any newly-added panels that aren't active.
+      if (typeof MutationObserver === 'function') {
+        if (!this._childObserver) {
+          var tabs = this;
+          this._childObserver = new MutationObserver(function () { tabs._syncFromChildren(); });
+        }
+        this._childObserver.observe(this, { childList: true });
+      }
+    }
+
+    _syncFromChildren() {
+      this._syncTabPositions();
+      var active = this._activePanel;
+      var stillThere = active && this.querySelector(':scope > lwtg-tab[panel="' + (window.CSS && CSS.escape ? CSS.escape(active) : active) + '"]');
+      if (!stillThere) {
+        var initial = this._strAttr('active', '') || this._firstTabPanel();
+        if (initial) this.selectTab(initial, { silent: true });
+        else this._activePanel = null;
+      } else {
+        this.selectTab(active, { silent: true });
+      }
     }
 
     disconnectedCallback() {
       super.disconnectedCallback();
-      this.removeEventListener('lwtf-select', this._handleSelect);
+      this.removeEventListener('lwt-select', this._handleSelect);
+      if (this._childObserver) this._childObserver.disconnect();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -2993,6 +3039,11 @@
     }
 
     _handleSelect(event) {
+      // lwt-select bubbles up from any descendant (lwtf-select, lwtf-input
+      // comboboxes, nav items, a nested <lwtg-tabs>' own tabs) -- only
+      // react to this container's own direct <lwtg-tab> children.
+      var tab = event.target;
+      if (!tab || tab.tagName !== 'LWTG-TAB' || tab.parentElement !== this) return;
       this.selectTab(event.detail.panel);
     }
 
@@ -3031,6 +3082,7 @@
       this.appendChild(panel);
 
       if (options.active || !this._activePanel) this.selectTab(panelName);
+      else panel.hidden = true; // keep non-active new panels hidden right away
 
       return { tab: tab, panel: panel, panelName: panelName };
     }
@@ -3252,6 +3304,12 @@
     '.children { padding-left: var(--lwt-tree-indent, 1.25rem); margin-left: 0.55rem; border-left: 1px solid var(--lwt-tree-guide-color, var(--lwt-color-border, #e5e7eb)); }' +
     '.children[hidden] { display: none; }';
 
+  // Uppercase tag names for .tagName comparisons. Keep in sync with the
+  // LWT.define() calls — these were left as 'LWT-TREE*' after the rename
+  // to lwtg-*, which made every item look like a leaf.
+  var ITEM_TAG = 'LWTG-TREE-ITEM';
+  var TREE_TAG = 'LWTG-TREE';
+
   var CHEVRON_SVG =
     '<svg viewBox="0 0 20 20"><path d="M7 4l6 6l-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
 
@@ -3270,6 +3328,8 @@
       this._handleRowClick = this._handleRowClick.bind(this);
       this._handleKeydown = this._handleKeydown.bind(this);
       this._handleCheckboxChange = this._handleCheckboxChange.bind(this);
+      this._renderedAsBranch = false;
+      this._childObserver = null;
     }
 
     connectedCallback() {
@@ -3277,8 +3337,11 @@
 
       if (!this._initialized) {
         this._initialized = true;
-        var hasChildren = !this.isLeaf;
-        this._expanded = hasChildren && this.hasAttribute('expanded');
+        // When scripts load in <head>, the parser upgrades this element
+        // as soon as its start tag is seen — before its children exist —
+        // so isLeaf is not trustworthy here. Store the requested state and
+        // let render()/_syncVisualState() decide based on real children.
+        this._expanded = this.hasAttribute('expanded');
         this._selected = this.hasAttribute('selected');
         this._applyChecked(this.hasAttribute('checked'), false);
         this._syncVisualState();
@@ -3286,12 +3349,24 @@
 
       this.addEventListener('click', this._handleRowClick);
       this.addEventListener('keydown', this._handleKeydown);
+
+      // Re-render when child items arrive later (streaming parse) or are
+      // added/removed directly via the DOM, so the chevron + children
+      // container match reality.
+      if (!this._childObserver) {
+        var self = this;
+        this._childObserver = new MutationObserver(function () {
+          if (self._renderedAsBranch !== !self.isLeaf) self.render();
+        });
+      }
+      this._childObserver.observe(this, { childList: true });
     }
 
     disconnectedCallback() {
       super.disconnectedCallback();
       this.removeEventListener('click', this._handleRowClick);
       this.removeEventListener('keydown', this._handleKeydown);
+      if (this._childObserver) this._childObserver.disconnect();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -3302,6 +3377,7 @@
     render() {
       var checkable = this._boolAttr('checkable');
       var hasChildren = !this.isLeaf;
+      this._renderedAsBranch = hasChildren;
       var fallbackLabel = escapeXml(this._strAttr('label', ''));
 
       var html =
@@ -3349,7 +3425,7 @@
     }
 
     get isLeaf() {
-      return !Array.prototype.some.call(this.children, function (c) { return c.tagName === 'LWT-TREE-ITEM'; });
+      return !Array.prototype.some.call(this.children, function (c) { return c.tagName === ITEM_TAG; });
     }
 
     get isExpanded() {
@@ -3425,13 +3501,13 @@
 
     _findTree() {
       var p = this.parentElement;
-      while (p && p.tagName !== 'LWT-TREE') p = p.parentElement;
+      while (p && p.tagName !== TREE_TAG) p = p.parentElement;
       return p;
     }
 
     _parentItem() {
       var p = this.parentElement;
-      return (p && p.tagName === 'LWT-TREE-ITEM') ? p : null;
+      return (p && p.tagName === ITEM_TAG) ? p : null;
     }
 
     _depth() {
@@ -3468,7 +3544,7 @@
     _cascadeUp() {
       var parent = this._parentItem();
       if (!parent) return;
-      var siblings = Array.prototype.filter.call(parent.children, function (c) { return c.tagName === 'LWT-TREE-ITEM'; });
+      var siblings = Array.prototype.filter.call(parent.children, function (c) { return c.tagName === ITEM_TAG; });
       var allChecked = siblings.every(function (c) { return c._checked && !c._indeterminate; });
       var noneChecked = siblings.every(function (c) { return !c._checked && !c._indeterminate; });
       if (allChecked) parent._applyChecked(true, false);
@@ -3483,7 +3559,7 @@
     // state comes out consistent even if a branch's attribute disagrees
     // with what its children actually say.
     _recomputeSelf() {
-      var childItems = Array.prototype.filter.call(this.children, function (c) { return c.tagName === 'LWT-TREE-ITEM'; });
+      var childItems = Array.prototype.filter.call(this.children, function (c) { return c.tagName === ITEM_TAG; });
       if (!childItems.length) {
         this._applyChecked(this.hasAttribute('checked'), false);
         return;
@@ -3590,6 +3666,9 @@
   var CSS = ':host { display: block; font-family: inherit; }';
   var TEMPLATE = '<div class="tree" part="tree" role="tree"><slot></slot></div>';
 
+  // Uppercase tag name for .tagName comparisons — keep in sync with define().
+  var ITEM_TAG = 'LWTG-TREE-ITEM';
+
   var NAV_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
 
   class LWTTree extends window.LWT.Element {
@@ -3603,6 +3682,8 @@
       this._handleSelect = this._handleSelect.bind(this);
       this._handleCheckChange = this._handleCheckChange.bind(this);
       this._handleKeydown = this._handleKeydown.bind(this);
+      this._treeObserver = null;
+      this._syncQueued = false;
     }
 
     connectedCallback() {
@@ -3622,6 +3703,27 @@
           self._recomputeChecked();
         });
       }
+
+      // With scripts in <head>, items are parsed *after* this element
+      // connects, so the one-shot sync above can run against an empty
+      // tree. Watch for items being added anywhere below and re-sync
+      // checkable + derived check state once per batch.
+      if (!this._treeObserver) {
+        var tree = this;
+        this._treeObserver = new MutationObserver(function () { tree._queueSync(); });
+      }
+      this._treeObserver.observe(this, { childList: true, subtree: true });
+    }
+
+    _queueSync() {
+      if (this._syncQueued) return;
+      this._syncQueued = true;
+      var self = this;
+      Promise.resolve().then(function () {
+        self._syncQueued = false;
+        self._syncCheckable();
+        self._recomputeChecked();
+      });
     }
 
     disconnectedCallback() {
@@ -3629,6 +3731,7 @@
       this.removeEventListener('lwt-itemselect', this._handleSelect);
       this.removeEventListener('lwt-itemcheck', this._handleCheckChange);
       this.removeEventListener('keydown', this._handleKeydown);
+      if (this._treeObserver) this._treeObserver.disconnect();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -3649,7 +3752,7 @@
     }
 
     _recomputeChecked() {
-      var roots = Array.prototype.filter.call(this.children, function (c) { return c.tagName === 'LWT-TREE-ITEM'; });
+      var roots = Array.prototype.filter.call(this.children, function (c) { return c.tagName === ITEM_TAG; });
       roots.forEach(function (r) { r._recomputeSelf(); });
     }
 
@@ -3684,7 +3787,7 @@
 
     addItem(options, parentItem) {
       var item = createTreeItem(options, this);
-      if (parentItem && parentItem.tagName === 'LWT-TREE-ITEM') {
+      if (parentItem && parentItem.tagName === ITEM_TAG) {
         var wasLeaf = parentItem.isLeaf;
         parentItem.appendChild(item);
         if (wasLeaf) parentItem.render();
@@ -3723,7 +3826,7 @@
     _handleKeydown(event) {
       if (NAV_KEYS.indexOf(event.key) === -1) return;
       var current = event.target;
-      if (!current || current.tagName !== 'LWT-TREE-ITEM') return;
+      if (!current || current.tagName !== ITEM_TAG) return;
 
       var visible = this._visibleItems();
       var idx = visible.indexOf(current);
