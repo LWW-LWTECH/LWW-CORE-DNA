@@ -1,0 +1,160 @@
+(function () {
+  'use strict';
+
+  if (!window.LWT || !window.LWT.Element) {
+    throw new Error('lwt-gen-tabs.js requires lwt-core.js to be loaded first.');
+  }
+
+  var CSS =
+    ':host { display: block; font-family: inherit; }' +
+    '.wrap { display: flex; height: 100%; }' +
+    '.tab-bar { display: flex; gap: 0.15rem; flex-shrink: 0; scrollbar-width: thin; }' +
+    '.panel-area { flex: 1; min-width: 0; min-height: 0; padding: 1rem 0.25rem; overflow: auto; }' +
+
+    // Position-driven layout wrapped in :where() so any external CSS
+    // targeting the same parts (e.g. ::part(tab-bar) at a breakpoint)
+    // wins with no !important. See lwt-gen-grid-item.js for the pattern.
+    ':where(:host([position="top"]) .wrap, :host(:not([position])) .wrap) { flex-direction: column; }' +
+    ':where(:host([position="top"]) .tab-bar, :host(:not([position])) .tab-bar) {' +
+    '  order: 0; flex-direction: row; overflow-x: auto; overflow-y: hidden;' +
+    '  border-bottom: 1px solid var(--lwt-tabs-border, var(--lwt-color-border, #e5e7eb)); max-width: 100%; }' +
+    ':where(:host([position="top"]) .panel-area, :host(:not([position])) .panel-area) { order: 1; }' +
+
+    ':where(:host([position="bottom"]) .wrap) { flex-direction: column; }' +
+    ':where(:host([position="bottom"]) .tab-bar) {' +
+    '  order: 1; flex-direction: row; overflow-x: auto; overflow-y: hidden;' +
+    '  border-top: 1px solid var(--lwt-tabs-border, var(--lwt-color-border, #e5e7eb)); max-width: 100%; }' +
+    ':where(:host([position="bottom"]) .panel-area) { order: 0; }' +
+
+    ':where(:host([position="left"]) .wrap) { flex-direction: row; }' +
+    ':where(:host([position="left"]) .tab-bar) {' +
+    '  order: 0; flex-direction: column; overflow-y: auto; overflow-x: hidden;' +
+    '  border-right: 1px solid var(--lwt-tabs-border, var(--lwt-color-border, #e5e7eb));' +
+    '  flex-basis: var(--lwt-tabs-bar-size, 180px); max-height: 100%; }' +
+    ':where(:host([position="left"]) .panel-area) { order: 1; }' +
+
+    ':where(:host([position="right"]) .wrap) { flex-direction: row; }' +
+    ':where(:host([position="right"]) .tab-bar) {' +
+    '  order: 1; flex-direction: column; overflow-y: auto; overflow-x: hidden;' +
+    '  border-left: 1px solid var(--lwt-tabs-border, var(--lwt-color-border, #e5e7eb));' +
+    '  flex-basis: var(--lwt-tabs-bar-size, 180px); max-height: 100%; }' +
+    ':where(:host([position="right"]) .panel-area) { order: 0; }';
+
+  var TEMPLATE =
+    '<div class="wrap" part="wrap">' +
+    '  <div class="tab-bar" part="tab-bar" role="tablist"><slot name="tab"></slot></div>' +
+    '  <div class="panel-area" part="panel-area"><slot name="panel"></slot></div>' +
+    '</div>';
+
+  class LWTTabs extends window.LWT.Element {
+    static get observedAttributes() {
+      return ['position'];
+    }
+
+    constructor() {
+      super();
+      this._activePanel = null;
+      this._autoId = 0;
+      this._initialized = false;
+      this._handleSelect = this._handleSelect.bind(this);
+    }
+
+    connectedCallback() {
+      super.connectedCallback();
+      this.addEventListener('lwt-select', this._handleSelect);
+
+      if (!this._initialized) {
+        this._initialized = true;
+        this._syncTabPositions();
+        var initial = this._strAttr('active', '') || this._firstTabPanel();
+        if (initial) this.selectTab(initial, { silent: true });
+      }
+    }
+
+    disconnectedCallback() {
+      super.disconnectedCallback();
+      this.removeEventListener('lwtf-select', this._handleSelect);
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+      if (oldValue === newValue) return;
+      if (name === 'position') this._syncTabPositions();
+    }
+
+    render() {
+      this._renderShadow(TEMPLATE, CSS);
+    }
+
+    _syncTabPositions() {
+      var position = this._strAttr('position', 'top');
+      this.querySelectorAll('lwtg-tab').forEach(function (tab) {
+        tab.setAttribute('position', position);
+      });
+    }
+
+    _firstTabPanel() {
+      var first = this.querySelector('lwtg-tab');
+      return first ? first.getAttribute('panel') : null;
+    }
+
+    _handleSelect(event) {
+      this.selectTab(event.detail.panel);
+    }
+
+    get activePanel() {
+      return this._activePanel;
+    }
+
+    selectTab(panelName, opts) {
+      opts = opts || {};
+      this._activePanel = panelName;
+
+      this.querySelectorAll('lwtg-tab').forEach(function (tab) {
+        tab.active = tab.getAttribute('panel') === panelName;
+      });
+      this.querySelectorAll('lwtg-tab-panel').forEach(function (panel) {
+        panel.hidden = panel.getAttribute('name') !== panelName;
+      });
+
+      if (!opts.silent) this.emit('change', { panel: panelName });
+    }
+
+    addTab(options) {
+      options = options || {};
+      var panelName = options.panel || ('tab-' + (++this._autoId));
+
+      var tab = this._genhtml({type: 'lwtg-tab', attr:{'slot':'tab', 'panel':panelName, 'position':this._strAttr('position', 'top')}});
+      if (options.disabled) tab.setAttribute('disabled', '');
+      if (options.label instanceof Node) tab.appendChild(options.label);
+      else if (options.label !== undefined) tab.textContent = options.label;
+
+      var panel = this._genhtml({type: 'lwtg-tab-panel', attr:{'slot':'panel', 'name':panelName}});
+      if (options.content instanceof Node) panel.appendChild(options.content);
+      else if (options.content !== undefined) panel.textContent = options.content;
+
+      this.appendChild(tab);
+      this.appendChild(panel);
+
+      if (options.active || !this._activePanel) this.selectTab(panelName);
+
+      return { tab: tab, panel: panel, panelName: panelName };
+    }
+
+    removeTab(panelName) {
+      var tab = this.querySelector('lwtg-tab[panel="' + panelName + '"]');
+      var panel = this.querySelector('lwtg-tab-panel[name="' + panelName + '"]');
+      var wasActive = this._activePanel === panelName;
+
+      if (tab) tab.remove();
+      if (panel) panel.remove();
+
+      if (wasActive) {
+        var next = this.querySelector('lwtg-tab');
+        if (next) this.selectTab(next.getAttribute('panel'));
+        else this._activePanel = null;
+      }
+    }
+  }
+
+  window.LWT.define('lwtg-tabs', LWTTabs);
+})();

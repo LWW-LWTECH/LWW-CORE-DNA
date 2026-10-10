@@ -1,0 +1,109 @@
+(function () {
+  'use strict';
+
+  if (!window.LWT || !window.LWT.Element) {
+    throw new Error('lwt-gen-button.js requires lwt-core.js to be loaded first.');
+  }
+
+  var CSS =
+    ':host {' +
+    '  display: inline-block;' +
+    '  --lwt-btn-radius: 6px;' +
+    '  font-family: inherit;' +
+    '}' +
+    ':host([hidden]) { display: none; }' +
+    'button {' +
+    '  font: inherit;' +
+    '  cursor: pointer;' +
+    '  border: 1px solid transparent;' +
+    '  border-radius: var(--lwt-btn-radius);' +
+    '  padding: 0.5em 1.1em;' +
+    '  font-size: 0.95em;' +
+    '  line-height: 1.2;' +
+    '  transition: background-color 120ms ease, border-color 120ms ease, opacity 120ms ease;' +
+    '}' +
+    'button:disabled { cursor: not-allowed; opacity: 0.55; }' +
+    'button:focus-visible {' +
+    '  outline: 2px solid var(--lwt-focus-color, var(--lwt-focus-ring, #2563eb));' +
+    '  outline-offset: 2px;' +
+    '}' +
+    ':where(:host([size="sm"]) button) { padding: 0.3em 0.75em; font-size: 0.82em; }' +
+    ':where(:host([size="lg"]) button) { padding: 0.7em 1.4em; font-size: 1.1em; }' +
+    'button.primary {' +
+    '  background: var(--lwt-primary, var(--lwt-color-primary, #2563eb));' +
+    '  border-color: var(--lwt-primary, var(--lwt-color-primary, #2563eb));' +
+    '  color: #fff;' +
+    '}' +
+    'button.primary:not(:disabled):hover { background: var(--lwt-primary-hover, var(--lwt-color-primary-hover, #1d4ed8)); }' +
+    'button.secondary {' +
+    '  background: transparent;' +
+    '  border-color: var(--lwt-secondary, var(--lwt-color-secondary, #6b7280));' +
+    '  color: var(--lwt-secondary, var(--lwt-color-secondary, #6b7280));' +
+    '}' +
+    'button.secondary:not(:disabled):hover { background: var(--lwt-secondary-hover, var(--lwt-color-secondary-hover, rgba(107,114,128,0.08))); }' +
+    'button.danger {' +
+    '  background: var(--lwt-danger, var(--lwt-color-danger-strong, #dc2626));' +
+    '  border-color: var(--lwt-danger, var(--lwt-color-danger-strong, #dc2626));' +
+    '  color: #fff;' +
+    '}' +
+    'button.danger:not(:disabled):hover { background: var(--lwt-danger-hover, var(--lwt-color-danger-hover, #b91c1c)); }';
+
+  class LWTButton extends window.LWT.Element {
+    static get observedAttributes() {
+      return ['variant', 'disabled', 'label'];
+    }
+
+    static get observedProps() {
+      return ['variant', 'disabled', 'label'];
+    }
+
+    constructor() {
+      super();
+      this._handleClick = this._handleClick.bind(this);
+    }
+
+    connectedCallback() {
+      super.connectedCallback();
+      // Listen on the host: clicks on the inner <button> bubble up to it,
+      // so we only ever need one listener regardless of how many times
+      // render() replaces the shadow contents.
+      this.addEventListener('click', this._handleClick);
+    }
+
+    disconnectedCallback() {
+      super.disconnectedCallback();
+      this.removeEventListener('click', this._handleClick);
+    }
+
+    _handleClick(event) {
+      this.emit('click', { originalEvent: event });
+    }
+
+    get variant() { return this._strAttr('variant', 'primary'); }
+    set variant(value) { this.setAttribute('variant', value); }
+
+    get disabled() { return this._boolAttr('disabled'); }
+    set disabled(value) {
+      if (value) this.setAttribute('disabled', '');
+      else this.removeAttribute('disabled');
+    }
+
+    get label() { return this._strAttr('label', ''); }
+    set label(value) { this.setAttribute('label', value); }
+
+    render() {
+      var variant = this.variant;
+      var disabled = this.disabled;
+      var label = this.label;
+
+      this._renderShadow(
+        '<button class="' + variant + '"' + (disabled ? ' disabled' : '') + ' part="button">' +
+        '<slot>' + label + '</slot>' +
+        '</button>',
+        CSS
+      );
+    }
+  }
+
+  window.LWT.define('lwtg-button', LWTButton);
+})();

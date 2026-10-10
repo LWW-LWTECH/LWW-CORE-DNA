@@ -273,7 +273,7 @@
         Front-end engineer focused on accessible, performant interfaces that hold up at scale.
     </lwtg-card>
 </lwtg-carousel>
-                <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>dot-as-image</code> &mdash; boolean; renders each dot as a small square thumbnail of that card&apos;s own image instead of a plain circular dot.</li><li><code>image-position</code> &mdash; optional; if set, synced onto every &lt;lwtg-card&gt; child ("top"/"bottom").</li></ul><p><strong>Slots:</strong></p><ul><li><code>(default)</code> &mdash; one or more &lt;lwtg-card&gt; slides &mdash; see the Cards entry above for what a single card supports.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>activeIndex</code> &mdash; read-only, current slide index.</li></ul><p><strong>Methods:</strong></p><ul><li><code>goTo(index)</code> &mdash; scrolls to a specific slide.</li><li><code>next()</code> &mdash; advances one slide.</li><li><code>prev()</code> &mdash; goes back one slide.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-change</code> &mdash; detail: { index, card } &mdash; fired whenever the active slide changes, from a dot click, .goTo(), or the user scrolling the track.</li></ul><p><strong>Theming:</strong> --lwt-carousel-gap, --lwt-carousel-card-width, --lwt-carousel-dot-color, --lwt-carousel-dot-active-color, --lwt-carousel-dot-size.</p>
+            <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>dot-as-image</code> &mdash; boolean; renders each dot as a small square thumbnail of that card&apos;s own image instead of a plain circular dot.</li><li><code>image-position</code> &mdash; optional; if set, synced onto every &lt;lwtg-card&gt; child ("top"/"bottom").</li></ul><p><strong>Slots:</strong></p><ul><li><code>(default)</code> &mdash; one or more &lt;lwtg-card&gt; slides &mdash; see the Cards entry above for what a single card supports.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>activeIndex</code> &mdash; read-only, current slide index.</li></ul><p><strong>Methods:</strong></p><ul><li><code>goTo(index)</code> &mdash; scrolls to a specific slide.</li><li><code>next()</code> &mdash; advances one slide.</li><li><code>prev()</code> &mdash; goes back one slide.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-change</code> &mdash; detail: { index, card } &mdash; fired whenever the active slide changes, from a dot click, .goTo(), or the user scrolling the track.</li></ul><p><strong>Theming:</strong> --lwt-carousel-gap, --lwt-carousel-card-width, --lwt-carousel-dot-color, --lwt-carousel-dot-active-color, --lwt-carousel-dot-size.</p>
             </details>
 
             <details>
@@ -485,7 +485,7 @@
     &lt;/lwtg-tree-item&gt;
 &lt;/lwtg-tree&gt;</code></pre>
                 
-                <lwtg-tree checkable>
+<lwtg-tree checkable>
     <lwtg-tree-item label="Small" expanded checked>
         <lwtg-tree-item label="Newsletters" data-value="newsletters" checked></lwtg-tree-item>
         <lwtg-tree-item label="Promotions" expanded checked>
