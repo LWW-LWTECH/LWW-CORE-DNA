@@ -115,7 +115,7 @@
             <h4>Overview</h4>
             <p>The Web-Core DNA library is designed to provide a robust foundation for building modern web applications, offering a suite of reusable components and utilities.</p>
             <p>Developed by Lee W Winter as part of the LWW-LWTECH initiative to support buisness app development.</p>
-            <p>The library is provided with an open-source MIT License, allowing developers to freely use and integrate it into their projects. If there are any suggestions or needs for additonal elements please contact the developer.</p>
+            <p>The library is provided with an open-source MIT License, allowing developers to freely use and integrate it into their projects. If there are any suggestions or needs for additonal elements please contact the developer. <a href="https://lwinter.tech">https://lwinter.tech</a></p>
 
             <p>The element prefix "lwtg-", "lwtf-", "lwtd-" stand for Lee Winter Tech and the last letter is the library g = general, d = dashboard, f = forms.</p>
             <h4>Implementation</h4>
@@ -521,6 +521,8 @@
     &lt;/lwtg-tree-item&gt;
 &lt;/lwtg-tree&gt;</code></pre>
                 
+<h4>Checkable Tree</h4>
+<pre><code>&lt;lwtg-tree checkable&gt;</code></pre>
 <lwtg-tree checkable>
     <lwtg-tree-item label="Small" expanded checked>
         <lwtg-tree-item label="Newsletters" data-value="newsletters" checked></lwtg-tree-item>
@@ -530,6 +532,19 @@
         </lwtg-tree-item>
     </lwtg-tree-item>
 </lwtg-tree>
+
+<h4>Non-Checkable Tree</h4>
+<pre><code>&lt;lwtg-tree &gt;</code></pre>
+<lwtg-tree>
+    <lwtg-tree-item label="Small" expanded checked>
+        <lwtg-tree-item label="Newsletters" data-value="newsletters" checked></lwtg-tree-item>
+        <lwtg-tree-item label="Promotions" expanded checked>
+            <lwtg-tree-item label="Weekly deals" data-value="weekly-deals" checked></lwtg-tree-item>
+            <lwtg-tree-item label="Seasonal sales" data-value="seasonal-sales" checked></lwtg-tree-item>
+        </lwtg-tree-item>
+    </lwtg-tree-item>
+</lwtg-tree>
+
                 <h4>Properties</h4><p><strong>Attributes:</strong></p><ul><li><code>checkable</code> &mdash; (on &lt;lwtg-tree&gt;) boolean; toggles checkbox rendering + cascading selection, synced onto every descendant item automatically.</li><li><code>label</code> &mdash; (on &lt;lwtg-tree-item&gt;) fallback text (overridden by slot="label").</li><li><code>data-value</code> &mdash; (on &lt;lwtg-tree-item&gt;) a leaf&apos;s return value, surfaced by .getSelectedLeaves().</li><li><code>expanded</code> &mdash; (on &lt;lwtg-tree-item&gt;) read once at connect for branches; ignored on leaves.</li><li><code>checked</code> &mdash; (on &lt;lwtg-tree-item&gt;) read once at connect as ground truth for leaves only &mdash; on branches it&apos;s always derived from children.</li><li><code>selected</code> &mdash; (on &lt;lwtg-tree-item&gt;) non-checkable mode only; managed by the parent tree.</li><li><code>disabled</code> &mdash; (on &lt;lwtg-tree-item&gt;) boolean; blocks interaction on this row only (does not cascade).</li></ul><p><strong>Slots:</strong></p><ul><li><code>label</code> &mdash; (on &lt;lwtg-tree-item&gt;) named slot for rich label content.</li><li><code>(default)</code> &mdash; (on &lt;lwtg-tree-item&gt;) nested &lt;lwtg-tree-item&gt; children.</li></ul><p><strong>JS Properties:</strong></p><ul><li><code>checked, selected</code> &mdash; (on &lt;lwtg-tree-item&gt;) get/set.</li><li><code>isExpanded, isLeaf, labelText</code> &mdash; (on &lt;lwtg-tree-item&gt;) get, read-only.</li></ul><p><strong>Methods:</strong></p><ul><li><code>addItem({ label, value, expanded, checked, disabled }, parentItem?)</code> &mdash; (on &lt;lwtg-tree&gt;, or directly on an item) creates and appends a new item.</li><li><code>removeItem(item)</code> &mdash; (on &lt;lwtg-tree&gt;) removes an item and everything nested under it.</li><li><code>getSelectedLeaves()</code> &mdash; (on &lt;lwtg-tree&gt;) returns [{ label, value, element }] for every checked/selected leaf.</li><li><code>expand() / collapse() / toggleExpand()</code> &mdash; (on &lt;lwtg-tree-item&gt;) control a branch.</li></ul><p><strong>Events:</strong></p><ul><li><code>lwt-change</code> &mdash; (on &lt;lwtg-tree&gt;) fired whenever any check/selection state changes anywhere in the tree.</li></ul><p><strong>Theming:</strong> --lwt-tree-chevron-color, --lwt-tree-check-color, --lwt-tree-label-color, --lwt-tree-selected-bg, --lwt-tree-indent, --lwt-tree-focus-color.</p>
             </details>
 
